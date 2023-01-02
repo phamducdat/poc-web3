@@ -1,10 +1,11 @@
 import React from 'react';
 import Home from "./components/home";
+import {Content} from "antd/es/layout/layout";
 
 const App = props => {
     return (
-        <div>
-            <Home/>
+        <div style={{alignItems: 'center', textAlign: 'center'}}>
+                <Home/>
         </div>
     );
 };
