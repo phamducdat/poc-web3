@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import abi from '../../utils/BuyMeACoffee.json';
-import {Button} from "antd";
+import {Button, Col, Form, Input, Row} from "antd";
 
 
 const Home = props => {
@@ -36,9 +36,43 @@ const Home = props => {
     return (
         <>
             <p>Buy Datpd a Coffee!</p>
-            <Button onClick={connectWallet}>
-                Connect your wallet
-            </Button>
+            {currentAccount ?
+                <>
+                    <Form
+                        layout={"vertical"}
+                    >
+                        <Row justify={"center"}>
+                            <Col span={4}>
+                                <Form.Item
+                                    label={"Name"}
+                                    name={"name"}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row justify={"center"}>
+                            <Col span={4}>
+
+                                <Form.Item
+                                    label={"Send Datpd a message"}
+                                    name={"message"}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Form>
+                </>
+
+                :
+
+
+                <Button onClick={connectWallet}>
+                    Connect your wallet
+                </Button>
+
+            }
         </>
     )
 };
