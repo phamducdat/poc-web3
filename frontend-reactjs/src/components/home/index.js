@@ -12,10 +12,31 @@ const Home = props => {
     const [message, setMessage] = useState("")
     const [memos, setMemos] = useState("")
 
+
+    const connectWallet = async () => {
+        try {
+            const {ethereum} = window;
+
+            if (!ethereum) {
+                console.log("please install MetaMask")
+            }
+
+
+            const accounts = await ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+
+
+            setCurrentAccount(accounts[0]);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <>
             <p>Buy Datpd a Coffee!</p>
-            <Button>
+            <Button onClick={connectWallet}>
                 Connect your wallet
             </Button>
         </>
