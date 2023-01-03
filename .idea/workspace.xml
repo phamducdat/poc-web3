@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6085eff0-856c-4b74-a8ce-9c7579f5d559" name="Changes" comment="add hardhat">
-      <change beforePath="$PROJECT_DIR$/BuyMeACoffee-contracts/contracts/Lock.sol" beforeDir="false" afterPath="$PROJECT_DIR$/BuyMeACoffee-contracts/contracts/BuyMeACoffee.sol" afterDir="false" />
+    <list default="true" id="6085eff0-856c-4b74-a8ce-9c7579f5d559" name="Changes" comment="update">
+      <change beforePath="$PROJECT_DIR$/BuyMeACoffee-contracts/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/BuyMeACoffee-contracts/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuyMeACoffee-contracts/scripts/deploy.js" beforeDir="false" afterPath="$PROJECT_DIR$/BuyMeACoffee-contracts/scripts/buy-coffee.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +97,7 @@
       <workItem from="1672604672530" duration="2938000" />
       <workItem from="1672636646639" duration="12318000" />
       <workItem from="1672782113215" duration="776000" />
-      <workItem from="1672783286661" duration="2014000" />
+      <workItem from="1672783286661" duration="2452000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1672604471568</created>
@@ -210,7 +211,21 @@
       <option name="project" value="LOCAL" />
       <updated>1672788735856</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="update">
+      <created>1672789284872</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1672789284872</updated>
+    </task>
+    <task id="LOCAL-00018" summary="update">
+      <created>1672789286359</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1672789286359</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -237,8 +252,8 @@
     <MESSAGE value="buy coffee" />
     <MESSAGE value="done" />
     <MESSAGE value="install staking" />
-    <MESSAGE value="update" />
     <MESSAGE value="add hardhat" />
-    <option name="LAST_COMMIT_MESSAGE" value="add hardhat" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
 </project>
