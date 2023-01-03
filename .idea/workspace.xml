@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6085eff0-856c-4b74-a8ce-9c7579f5d559" name="Changes" comment="update" />
+    <list default="true" id="6085eff0-856c-4b74-a8ce-9c7579f5d559" name="Changes" comment="add hardhat">
+      <change beforePath="$PROJECT_DIR$/BuyMeACoffee-contracts/contracts/Lock.sol" beforeDir="false" afterPath="$PROJECT_DIR$/BuyMeACoffee-contracts/contracts/BuyMeACoffee.sol" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -94,7 +96,7 @@
       <workItem from="1672604672530" duration="2938000" />
       <workItem from="1672636646639" duration="12318000" />
       <workItem from="1672782113215" duration="776000" />
-      <workItem from="1672783286661" duration="1257000" />
+      <workItem from="1672783286661" duration="2014000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1672604471568</created>
@@ -201,7 +203,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672783112298</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="add hardhat">
+      <created>1672788735856</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1672788735856</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -229,6 +238,7 @@
     <MESSAGE value="done" />
     <MESSAGE value="install staking" />
     <MESSAGE value="update" />
-    <option name="LAST_COMMIT_MESSAGE" value="update" />
+    <MESSAGE value="add hardhat" />
+    <option name="LAST_COMMIT_MESSAGE" value="add hardhat" />
   </component>
 </project>
