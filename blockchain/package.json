@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "yarn hardhat compile"
+    "compile": "yarn hardhat compile",
+    "deploy rewardToken": "yarn hardhat deploy --tags rewardToken"
   },
   "keywords": [],
   "author": "",
