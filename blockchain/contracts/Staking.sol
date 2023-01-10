@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
     error Staking__TransferFailed();
 
+    error Staking__NeedsMoreThanZero();
+
 contract Staking {
 
     IERC20 public s_stakingToken;
@@ -33,6 +35,13 @@ contract Staking {
         _;
     }
 
+    modifier moreThanZero(uint256 amount) {
+        if (amount == 0) {
+            revert Staking__NeedsMoreThanZero();
+        }
+        _;
+    }
+
     function earned(address account) public view returns (uint256) {
         uint256 currentBalance = s_balances[account];
         // how much they have been paid already
@@ -42,10 +51,9 @@ contract Staking {
 
         uint256 pastRewards = s_rewards[account];
 
-        uint256 earned = ((currentBalance * (currentRewardPerToken - amountPaid))
+        return ((currentBalance * (currentRewardPerToken - amountPaid))
         / 1e18) + pastRewards;
 
-        return earned;
 
     }
 
@@ -73,7 +81,7 @@ contract Staking {
 
     // do we allow any tokens?
     // or just a specific token?
-    function stake(uint256 amount) external updateReward(msg.sender) {
+    function stake(uint256 amount) external updateReward(msg.sender) moreThanZero(amount){
         // keep track of how much this user has staked
         // keep track of how much token we have total
         // transfer the token this contract
@@ -87,7 +95,7 @@ contract Staking {
         }
     }
 
-    function withdraw(uint256 amount) external updateReward(msg.sender) {
+    function withdraw(uint256 amount) external updateReward(msg.sender) moreThanZero(amount) {
         s_balances[msg.sender] = s_balances[msg.sender] - amount;
         s_totalSupply = s_totalSupply - amount;
         bool success = s_stakingToken.transfer(msg.sender, amount);
