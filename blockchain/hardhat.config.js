@@ -1,4 +1,3 @@
-require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-waffle")
 require("hardhat-deploy")
 
