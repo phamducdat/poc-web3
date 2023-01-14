@@ -11,15 +11,23 @@ async function printBalances(addresses) {
     let idx = 0;
     for (const address of addresses) {
         console.log(`Address ${idx} balance: `, await getBalance(address));
-        idx ++;
+        idx++;
     }
 }
+
 async function main() {
-    const [owner] = await hre.ethers.getSigners();
-    const ownerAddress = owner.address;
+    const RewardToken = await hre.ethers.getContractFactory("RewardToken");
+    const rewardToken = await RewardToken.deploy();
 
+    await rewardToken.deployed();
+    console.log("Reward token deployed to: ", rewardToken.address);
 
-    console.log("dat with getBalance = ", await getBalance(ownerAddress))
+    const Staking = await hre.ethers.getContractFactory("Staking");
+    const staking = await Staking.deploy(rewardToken.address, rewardToken.address);
+
+    await staking.deployed();
+
+    console.log("staking token deployed to: ", staking.address);
 
 }
 
