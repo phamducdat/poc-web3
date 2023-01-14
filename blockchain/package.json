@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy-buy-me-a-coffee": "npx hardhat run scripts/buy-coffee.js",
-    "deploy-staking": "npx hardhat run scripts/staking.js"
+    "deploy:staking": "npx hardhat run scripts/staking.js",
+    "deploy:reward-token": "npx hardhat run scripts/reward-token.js"
   },
   "keywords": [],
   "author": "",
