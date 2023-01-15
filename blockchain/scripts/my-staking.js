@@ -1,13 +1,13 @@
-const hre = require("hardhat");
+const {ethers} = require("hardhat");
 
 
 async function main() {
-    const [owner] = await hre.ethers.getSigners();
+   const [signer1, signer2] = await ethers.getSigners();
+   const Staking = await ethers.getContractFactory("MyStaking", signer1);
 
-    const MyStaking = await hre.ethers.getContractFactory("MyStaking");
-    const myStaking = await MyStaking.deploy();
-
-    await myStaking.deployed();
+   const staking = await Staking.deploy({value: ethers.utils.parseEther('10')});
+   await staking.deployed();
+    console.log("dat with staking = ", await staking.owner());
 }
 
 
