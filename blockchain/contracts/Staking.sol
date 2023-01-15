@@ -69,6 +69,7 @@ contract Staking is ReentrancyGuard {
         }
     }
 
+
     /**
      * @notice Withdraw tokens from this contract
      * @param amount | How much to withdraw
