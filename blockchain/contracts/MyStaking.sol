@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
+    error PayableFailed();
+    error NeedsMoreThanZero();
+
 contract MyStaking {
     address public owner;
 
@@ -46,7 +49,7 @@ contract MyStaking {
             block.timestamp + (numDays * 1 days),
             tiers[numDays],
             msg.value,
-            calculateInterest(tiers[numDays], numDays, msg.value),
+            calculateInterest(tiers[numDays], msg.value),
             true
         );
 
@@ -54,9 +57,9 @@ contract MyStaking {
         currentPositionId += 1;
     }
 
-    function calculateInterest(uint basisPoints, uint numDays, uint weiAmount)
-    private pure returns(uint) {
-         return basisPoints * weiAmount / 10000;
+    function calculateInterest(uint basisPoints, uint weiAmount)
+    private pure returns (uint) {
+        return basisPoints * weiAmount / 10000;
     }
 
     function modifyLockPeriods(uint numDays, uint basisPoints) external {
@@ -66,25 +69,25 @@ contract MyStaking {
         lockPeriods.push(numDays);
     }
 
-    function getLockPeriods() external view returns(uint[] memory) {
+    function getLockPeriods() external view returns (uint[] memory) {
         return lockPeriods;
     }
 
-    function getInterestRate(uint numDays) external view returns(uint) {
+    function getInterestRate(uint numDays) external view returns (uint) {
         return tiers[numDays];
     }
 
     function getPositionById(uint positionId)
-    external view returns(Position memory){
+    external view returns (Position memory){
         return positions[positionId];
     }
 
-    function getPositionIdsForAddress(address walletAddress) external view returns(uint[] memory)  {
+    function getPositionIdsForAddress(address walletAddress) external view returns (uint[] memory)  {
         return positionIdsByAddress[walletAddress];
 
     }
 
-    function changeUnlockDate(uint positionId, uint newUnlockDate) external  {
+    function changeUnlockDate(uint positionId, uint newUnlockDate) external {
         require(owner == msg.sender, "Only owner may modify unlock date");
 
         positions[positionId].unlockDate = newUnlockDate;
@@ -97,14 +100,19 @@ contract MyStaking {
         positions[positionId].open = false;
 
         if (block.timestamp > positions[positionId].unlockDate) {
-            uint amount = positions[positionId].weiStaked  + positions[positionId].weiInterest;
-            payable(msg.sender).call{value: amount}("");
+            uint amount = positions[positionId].weiStaked + positions[positionId].weiInterest;
+            (bool success,) = payable(msg.sender).call{value : amount}("");
+            if (!success) {
+                revert PayableFailed();
+            }
+
         } else {
-            payable(msg.sender).call{value: positions[positionId].weiStaked}("");
+            (bool success,) = payable(msg.sender).call{value : positions[positionId].weiStaked}("");
+            if (!success) {
+                revert PayableFailed();
+            }
 
         }
-
-
 
 
     }
