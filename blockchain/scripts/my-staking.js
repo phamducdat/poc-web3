@@ -2,6 +2,10 @@ const {ethers} = require("hardhat");
 const hre = require("hardhat");
 const {moveTime} = require("../utils/move-time");
 
+const SECONDS_IN_30_DAY = 2592000
+const SECONDS_IN_90_DAY = 7776000
+const SECONDS_IN_180_DAY = 15552000
+
 async function getBalance(address) {
     const balanceBigInt = await hre.ethers.provider.getBalance(address);
     return hre.ethers.utils.formatEther(balanceBigInt);
@@ -17,19 +21,21 @@ async function main() {
     console.log("Balance of account before = ", await getBalance(account.address));
     console.log("===========================")
     const totalStakeEther = ethers.utils.parseEther('100');
-    await staking.connect(account).stakeEther(180, {value:totalStakeEther});
-    console.log("Balance of account after = ", await getBalance(account.address))
-    // console.log("Position before 30 day = ", await staking.positions(0)) ;
+    await staking.connect(account).stakeEther(180, {value: totalStakeEther});
+    // console.log("Balance of account after = ", await getBalance(account.address))
+    //
+    // console.log("===========================")
+    // await moveTime(SECONDS_IN_180_DAY)
+    // console.log("===========================")
+    // await staking.connect(account).closePosition(0);
+    // console.log("Balance of account after 180 days = ", await getBalance(account.address))
 
     console.log("===========================")
-    await moveTime(17280001)
-    console.log("===========================")
-    await staking.connect(account).closePosition(0);
-    // console.log("Position after 30 day = ", await staking.positions(0)) ;
-    console.log("Balance of account after 200 days = ", await getBalance(account.address))
+    await staking.withdraw(ethers.utils.parseEther('100'))
+    console.log("Balance of owner = ", await getBalance(owner.address))
+    console.log("Balance of stakePool = ", await staking.getBalanceOfStaked())
 
-    
-    
+
 }
 
 

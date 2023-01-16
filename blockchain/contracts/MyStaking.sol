@@ -57,6 +57,20 @@ contract MyStaking {
         currentPositionId += 1;
     }
 
+    function withdraw(uint256 amount) external {
+        require(amount > 0, "Amount not negative");
+        require(address(this).balance >= amount, "Not enough");
+
+        (bool success,) = payable(owner).call{value : amount}("");
+        if (!success) {
+            revert PayableFailed();
+        }
+    }
+
+    function getBalanceOfStaked() external view returns (uint256)   {
+        return address(this).balance;
+    }
+
     function calculateInterest(uint basisPoints, uint weiAmount)
     private pure returns (uint) {
         return basisPoints * weiAmount / 10000;
