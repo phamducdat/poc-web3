@@ -1,128 +1,153 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-    error TransferFailed();
-    error NeedsMoreThanZero();
+contract Staking {
+    address public owner;
 
-contract Staking is ReentrancyGuard {
-    IERC20 public s_rewardsToken;
-    IERC20 public s_stakingToken;
-    uint256 public constant REWARD_RATE = 100;
-    uint256 public s_lastUpdateTime;
-    uint256 public s_rewardPerTokenStored;
+    uint public currentTokenId = 1;
 
-    mapping(address => uint256) public s_userRewardPerTokenPaid;
-    mapping(address => uint256) public s_rewards;
-
-    uint256 private s_totalSupply;
-    mapping(address => uint256) public s_balances;
-
-    event Staked(address indexed user, uint256 indexed amount);
-    event WithdrewStake(address indexed user, uint256 indexed amount);
-    event RewardsClaimed(address indexed user, uint256 indexed amount);
-
-    constructor(address stakingToken, address rewardsToken) {
-        s_stakingToken = IERC20(stakingToken);
-        s_rewardsToken = IERC20(rewardsToken);
+    struct Token {
+        uint tokenId;
+        string name;
+        string symbol;
+        address tokenAddress;
+        uint usdPrice;
+        uint ethPrice;
+        uint apy;
     }
 
-    /**
-     * @notice How much reward a token gets based on how long it's been in and during which "snapshots"
-     */
-    function rewardPerToken() public view returns (uint256) {
-        if (s_totalSupply == 0) {
-            return s_rewardPerTokenStored;
-        }
-        return
-        s_rewardPerTokenStored +
-        (((block.timestamp - s_lastUpdateTime) * REWARD_RATE * 1e18) / s_totalSupply);
+    struct Position {
+        uint positionId;
+        address walletAddress;
+        string name;
+        string symbol;
+        uint createdDate;
+        uint apy;
+        uint tokenQuantity;
+        uint usdValue;
+        uint ethValue;
+        bool open;
     }
 
-    /**
-     * @notice How much reward a user has earned
-     */
-    function earned(address account) public view returns (uint256) {
-        return
-        ((s_balances[account] * (rewardPerToken() - s_userRewardPerTokenPaid[account])) /
-        1e18) + s_rewards[account];
+    uint public ethUsdPrice;
+
+    string[] public tokenSymbols;
+    mapping(string => Token) public tokens;
+
+    uint public currentPositionId = 1;
+
+    mapping(uint => Position) public positions;
+
+
+    mapping(address => uint[]) public positionIdsByAddress;
+
+    mapping(string => uint) public stakedTokens;
+
+    constructor(uint currentEthPrice) payable {
+        ethUsdPrice = currentEthPrice;
+        owner = msg.sender;
     }
 
-    /**
-     * @notice Deposit tokens into this contract
-     * @param amount | How much to stake
-     */
-    function stake(uint256 amount)
-    external
-    updateReward(msg.sender)
-    nonReentrant
-    moreThanZero(amount)
-    {
-        s_totalSupply += amount;
-        s_balances[msg.sender] += amount;
-        emit Staked(msg.sender, amount);
-        bool success = s_stakingToken.transferFrom(msg.sender, address(this), amount);
-        if (!success) {
-            revert TransferFailed();
-        }
+    function addToken(string calldata name,
+        string calldata symbol,
+        address tokenAddress,
+        uint usdPrice,
+        uint apy) external onlyOwner {
+        tokenSymbols.push(symbol);
+        tokens[symbol] = Token(
+            currentTokenId,
+            name,
+            symbol,
+            tokenAddress,
+            usdPrice,
+            usdPrice / ethUsdPrice,
+            apy
+        );
+        currentTokenId += 1;
+
+    }
+
+    function getTokenSymbols() public view returns (string[] memory) {
+        return tokenSymbols;
+    }
+
+    function getToken(string calldata tokenSymbol) public view returns (Token memory) {
+        return tokens[tokenSymbol];
+    }
+
+    function stakeTokens(string calldata symbol, uint tokenQuantity) external {
+        require(tokens[symbol].tokenId != 0, "This token cannot be staked");
+        IERC20(tokens[symbol].tokenAddress).transferFrom(msg.sender, address(this), tokenQuantity);
+
+        positions[currentPositionId] = Position(
+            currentPositionId,
+            msg.sender,
+            tokens[symbol].name,
+            symbol,
+            block.timestamp,
+            tokens[symbol].apy,
+            tokenQuantity,
+            tokens[symbol].usdPrice + tokenQuantity,
+            (tokens[symbol].usdPrice + tokenQuantity) / ethUsdPrice,
+            true
+        );
+
+        positionIdsByAddress[msg.sender].push(currentPositionId);
+        currentPositionId += 1;
+        stakedTokens[symbol] += tokenQuantity;
+    }
+
+    function getPositionIdsForAddress() external view returns (uint[] memory) {
+        return positionIdsByAddress[msg.sender];
+    }
+
+    function getPositionById(uint positionId) external view returns (Position memory) {
+        return positions[positionId];
+    }
+
+    function calculateInterest(uint apy, uint value, uint numberDays)
+    public pure returns (uint) {
+        return apy * value * numberDays / 10000 / 356;
     }
 
 
-    /**
-     * @notice Withdraw tokens from this contract
-     * @param amount | How much to withdraw
-     */
-    function withdraw(uint256 amount) external updateReward(msg.sender) nonReentrant {
-        s_totalSupply -= amount;
-        s_balances[msg.sender] -= amount;
-        emit WithdrewStake(msg.sender, amount);
-        bool success = s_stakingToken.transfer(msg.sender, amount);
-        if (!success) {
-            revert TransferFailed();
-        }
+    function closePosition(uint positionId) external {
+        require(positions[positionId].walletAddress == msg.sender, "Not the owner of this position");
+
+        require(positions[positionId].open == true, "Position already closed");
+
+        positions[positionId].open = false;
+
+        IERC20(tokens[positions[positionId].symbol].tokenAddress).transfer(msg.sender,
+            positions[positionId].tokenQuantity);
+
+        uint numberDays = calculateNumberDays(positions[positionId].createdDate);
+
+        uint weiAmount = calculateInterest(
+            positions[positionId].apy,
+            positions[positionId].ethValue,
+            numberDays
+
+        );
+
+        payable(msg.sender).call{value:weiAmount}("");
     }
 
-    /**
-     * @notice User claims their tokens
-     */
-    function claimReward() external updateReward(msg.sender) nonReentrant {
-        uint256 reward = s_rewards[msg.sender];
-        s_rewards[msg.sender] = 0;
-        emit RewardsClaimed(msg.sender, reward);
-        bool success = s_rewardsToken.transfer(msg.sender, reward);
-        if (!success) {
-            revert TransferFailed();
-        }
+    function calculateNumberDays(uint createdDate) public view returns(uint) {
+        return (block.timestamp - createdDate) / 60 / 60 / 24;
     }
 
-    /********************/
-    /* Modifiers Functions */
-    /********************/
-    modifier updateReward(address account) {
-        s_rewardPerTokenStored = rewardPerToken();
-        s_lastUpdateTime = block.timestamp;
-        s_rewards[account] = earned(account);
-        s_userRewardPerTokenPaid[account] = s_rewardPerTokenStored;
+    function modifyCreateDate(uint positionId, uint newCreatedDate) external onlyOwner {
+        positions[positionId].createdDate = newCreatedDate;
+        
+    }
+
+    modifier onlyOwner() {
+        require(owner == msg.sender, "Only Owner may call this function");
         _;
     }
 
-    modifier moreThanZero(uint256 amount) {
-        if (amount == 0) {
-            revert NeedsMoreThanZero();
-        }
-        _;
-    }
-
-    /********************/
-    /* Getter Functions */
-    /********************/
-    // Ideally, we'd have getter functions for all our s_ variables we want exposed, and set them all to private.
-    // But, for the purpose of this demo, we've left them public for simplicity.
-
-    function getStaked(address account) public view returns (uint256) {
-        return s_balances[account];
-    }
 
 }

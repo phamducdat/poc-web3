@@ -18,6 +18,9 @@ async function main() {
     const staking = await Staking.deploy({value: ethers.utils.parseEther('200')});
     await staking.deployed();
 
+    console.log("Staking's address = ", staking.address, owner.address)
+
+    // 0x5FbDB2315678afecb367f032d93F642f64180aa3
     console.log("Balance of account before = ", await getBalance(account.address));
     console.log("===========================")
     const totalStakeEther = ethers.utils.parseEther('100');
