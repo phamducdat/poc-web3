@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract WrappedBitcoin is ERC20 {
 
     constructor() ERC20('WrappedBitcoin', 'WBC') {
-        _mint(msg.sender, 5000 * 10 ** 10);
+        _mint(msg.sender, 1000000 * 10 ** 18);
     }
 }
 

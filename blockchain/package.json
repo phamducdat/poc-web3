@@ -8,13 +8,14 @@
     "deploy-buy-me-a-coffee": "npx hardhat run scripts/buy-coffee.js",
     "deploy:reward-token": "npx hardhat run scripts/reward-token.js",
     "deploy:staking": "npx hardhat run scripts/staking.js",
-    "deploy:my-staking": "npx hardhat run scripts/my-staking.js"  ,
+    "deploy:my-staking": "npx hardhat run scripts/my-staking.js",
     "deploy:erc20-staking": "npx hardhat run scripts/erc20-staking.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.8.1",
     "hardhat": "^2.12.5"
   },
