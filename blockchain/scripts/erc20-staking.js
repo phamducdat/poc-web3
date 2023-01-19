@@ -1,5 +1,4 @@
-const {waffle} = require("hardhat");
-const {ethers} = require("hardhat");
+
 
 async function main() {
     [owner] = await ethers.getSigners();
@@ -45,7 +44,7 @@ async function main() {
     await staking.connect(owner).stakeTokens('WETH',ethers.utils.parseEther('10'))
 
 
-    const provider = ethers.provider;
+    const provider = waffle.provider;
     const block = await provider.getBlock()
     const newCreatedDate = block.timestamp - (86400 * 365)
     await staking.connect(owner).modifyCreatedDate(1, newCreatedDate)

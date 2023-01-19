@@ -855,7 +855,7 @@
     "@types/sinon-chai" "^3.2.3"
     "@types/web3" "1.0.19"
 
-"@openzeppelin/contracts@^4.8.1":
+"@openzeppelin/contracts@^4.7.3":
   "integrity" "sha512-xQ6eUZl+RDyb/FiZe1h+U7qr/f4p/SrTSQcTPH2bjur3C5DbuW/zFgCU/b1P/xcIaEqJep+9ju4xDRi3rmChdQ=="
   "resolved" "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.8.1.tgz"
   "version" "4.8.1"
@@ -3779,7 +3779,7 @@
     "secp256k1" "^4.0.1"
     "setimmediate" "^1.0.5"
 
-"ethereum-waffle@^3.2.0":
+"ethereum-waffle@^3.2.0", "ethereum-waffle@^3.4.4":
   "integrity" "sha512-PA9+jCjw4WC3Oc5ocSMBj5sXvueWQeAbvCA+hUlb6oFgwwKyq5ka3bWQ7QZcjzIX+TdFkxP4IbFmoY2D8Dkj9Q=="
   "resolved" "https://registry.npmjs.org/ethereum-waffle/-/ethereum-waffle-3.4.4.tgz"
   "version" "3.4.4"
@@ -4926,7 +4926,7 @@
     "eth-gas-reporter" "^0.2.25"
     "sha1" "^1.1.1"
 
-"hardhat@^2.0.0", "hardhat@^2.0.2", "hardhat@^2.0.4", "hardhat@^2.11.0", "hardhat@^2.12.5", "hardhat@^2.9.4", "hardhat@^2.9.5", "hardhat@^2.9.9":
+"hardhat@^2.0.0", "hardhat@^2.0.2", "hardhat@^2.0.4", "hardhat@^2.10.1", "hardhat@^2.11.0", "hardhat@^2.9.4", "hardhat@^2.9.5", "hardhat@^2.9.9":
   "integrity" "sha512-f/t7+hLlhsnQZ6LDXyV+8rHGRZFZY1sgFvgrwr9fBjMdGp1Bu6hHq1KXS4/VFZfZcVdL1DAWWEkryinZhqce+A=="
   "resolved" "https://registry.npmjs.org/hardhat/-/hardhat-2.12.5.tgz"
   "version" "2.12.5"

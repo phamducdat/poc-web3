@@ -104,6 +104,7 @@ function App() {
         const queriedAssets = await Promise.all(
             assetIds.map(id => contract.connect(signer).getPositionById(Number(id)) )
         )
+        
 
         queriedAssets.map(async asset => {
             const tokensStaked = toEther(asset.tokenQuantity)
