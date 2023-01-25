@@ -77,7 +77,7 @@ contract MyStaking {
         currentPositionId += 1;
     }
 
-    function getPositionById(uint positionId) public view  returns (Position memory)  {
+    function getPositionById(uint positionId) public view returns (Position memory)  {
 
         return positions[positionId];
 
@@ -103,7 +103,7 @@ contract MyStaking {
 
     function calculateInterest(uint apy, uint ethPrice, uint quantity)
     public pure returns (uint) {
-        return 2  + quantity ;
+        return (apy * 10 * 10 ** 18 / 10000) + quantity;
     }
 
     function calculateNumberDays(uint createdDate) public view returns (uint) {

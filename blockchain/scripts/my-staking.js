@@ -34,7 +34,7 @@ async function main() {
     const WrappedEther = await ethers.getContractFactory('WrappedEther', datpd);
     wrappedEther = await WrappedEther.deploy();
 
-    await staking.connect(owner).addToken('Chainlink', 'LINK', chainlink.address, 867, 9999);
+    await staking.connect(owner).addToken('Chainlink', 'LINK', chainlink.address, 867, 1500);
     await staking.connect(owner).addToken('Tether', 'USDT', tether.address, 100, 200);
     await staking.connect(owner).addToken('UsdCoin', 'USDC', usdCoin.address, 100, 200,);
     await staking.connect(owner).addToken('WrappedBitcoin', 'WBTC', wrappedBitcoin.address, 2382096, 500);

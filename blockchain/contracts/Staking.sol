@@ -89,8 +89,8 @@ contract Staking {
             block.timestamp,
             tokens[symbol].apy,
             tokenQuantity,
-            tokens[symbol].usdPrice + tokenQuantity,
-            (tokens[symbol].usdPrice + tokenQuantity) / ethUsdPrice,
+            tokens[symbol].usdPrice * tokenQuantity,
+            (tokens[symbol].usdPrice * tokenQuantity) / ethUsdPrice,
             true
         );
 
