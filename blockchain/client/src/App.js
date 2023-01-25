@@ -194,15 +194,15 @@ function App() {
 
     const displayLogo = symbol => {
         if (symbol === 'LINK') {
-            return (<><img className="logoImg" src="link.webp"/></>)
+            return (<><img className="logoImg" src="link.png"/></>)
         } else if (symbol === 'USDT') {
-            return (<><img className="logoImg" src="usdt.webp"/></>)
+            return (<><img className="logoImg" src="usdt.png" /></>)
         } else if (symbol === 'USDC') {
-            return (<><img className="logoImg" src="usdc.webp"/></>)
+            return (<><img className="logoImg" src="usdc.png"/></>)
         } else if (symbol === 'WBTC') {
-            return (<><img className="logoImg" src="wbtc.webp"/></>)
+            return (<><img className="logoImg" src="btc.png"/></>)
         } else if (symbol === 'WETH') {
-            return (<><img className="logoImg" src="weth.webp"/></>)
+            return (<><img className="logoImg" src="eth.png"/></>)
         }
     }
 
