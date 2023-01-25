@@ -136,7 +136,8 @@ contract Staking {
     }
 
     function calculateNumberDays(uint createdDate) public view returns(uint) {
-        return 172800 / 60 / 60 / 24;
+        return (block.timestamp - createdDate) / 60 / 60 / 24;
+
     }
 
     function modifyCreatedDate(uint positionId, uint newCreatedDate) external onlyOwner {

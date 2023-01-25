@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 
-import { ethers } from 'ethers';
+import {ethers} from 'ethers';
 
 import artifact from './artifacts/contracts/Staking.sol/Staking.json'
 import linkArtifact from './artifacts/contracts/Chainlink.sol/Chainlink.json'
@@ -13,13 +13,12 @@ import './App.css';
 
 import StakeModal from './components/StakeModal'
 
-const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
-const LINK_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
-const USDT_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
-const USDC_ADDRESS = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9'
-const WBTC_ADDRESS = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
-const WETH_ADDRESS = '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707'
-
+const CONTRACT_ADDRESS = '0x139e1D41943ee15dDe4DF876f9d0E7F85e26660A'
+const LINK_ADDRESS = '0xAdE429ba898c34722e722415D722A70a297cE3a2'
+const USDT_ADDRESS = '0x7B4f352Cd40114f12e82fC675b5BA8C7582FC513'
+const USDC_ADDRESS = '0xcE0066b1008237625dDDBE4a751827de037E53D2'
+const WBTC_ADDRESS = '0x82EdA215Fa92B45a3a76837C65Ab862b6C7564a8'
+const WETH_ADDRESS = '0x87006e75a5B6bE9D1bbF61AC8Cd84f05D9140589'
 
 
 function App() {
@@ -62,21 +61,21 @@ function App() {
             const usdcContract = await new ethers.Contract(USDC_ADDRESS, usdcArtifact.abi, provider)
             const wbtcContract = await new ethers.Contract(WBTC_ADDRESS, wbtcArtifact.abi, provider)
             const wethContract = await new ethers.Contract(WETH_ADDRESS, wethArtifact.abi, provider)
-            setTokenContracts(prev => ({...prev, ['LINK']:linkContract}))
-            setTokenContracts(prev => ({...prev, ['USDT']:usdtContract}))
-            setTokenContracts(prev => ({...prev, ['USDC']:usdcContract}))
-            setTokenContracts(prev => ({...prev, ['WBTC']:wbtcContract}))
-            setTokenContracts(prev => ({...prev, ['WETH']:wethContract}))
+            setTokenContracts(prev => ({...prev, ['LINK']: linkContract}))
+            setTokenContracts(prev => ({...prev, ['USDT']: usdtContract}))
+            setTokenContracts(prev => ({...prev, ['USDC']: usdcContract}))
+            setTokenContracts(prev => ({...prev, ['WBTC']: wbtcContract}))
+            setTokenContracts(prev => ({...prev, ['WETH']: wethContract}))
 
             const tokenSymbols = await contract.getTokenSymbols()
             setTokenSymbols(tokenSymbols)
 
             tokenSymbols.map(async symbol => {
                 const token = await contract.getToken(symbol)
-                setTokens(prev => ({...prev, [symbol]:token}))
+                setTokens(prev => ({...prev, [symbol]: token}))
 
                 const stakedAmount = await contract.stakedTokens(symbol)
-                setStakedTokens(prev => ({...prev, [symbol]:toEther(stakedAmount)}))
+                setStakedTokens(prev => ({...prev, [symbol]: toEther(stakedAmount)}))
             })
         }
         onLoad();
@@ -102,9 +101,9 @@ function App() {
         setAssetIds(assetIds)
 
         const queriedAssets = await Promise.all(
-            assetIds.map(id => contract.connect(signer).getPositionById(Number(id)) )
+            assetIds.map(id => contract.connect(signer).getPositionById(Number(id)))
         )
-        
+
 
         queriedAssets.map(async asset => {
             const tokensStaked = toEther(asset.tokenQuantity)
@@ -194,15 +193,15 @@ function App() {
 
     const displayLogo = symbol => {
         if (symbol === 'LINK') {
-            return (<><img className="logoImg" src="link.png"/></>)
+            return (<><img className="logoImg" src="link.png" alt={"link"}/></>)
         } else if (symbol === 'USDT') {
-            return (<><img className="logoImg" src="usdt.png" /></>)
+            return (<><img className="logoImg" src="usdt.png" alt={"usdt"}/></>)
         } else if (symbol === 'USDC') {
-            return (<><img className="logoImg" src="usdc.png"/></>)
+            return (<><img className="logoImg" src="usdc.png" alt={"usdc"}/></>)
         } else if (symbol === 'WBTC') {
-            return (<><img className="logoImg" src="btc.png"/></>)
+            return (<><img className="logoImg" src="btc.png" alt={"btc"}/></>)
         } else if (symbol === 'WETH') {
-            return (<><img className="logoImg" src="eth.png"/></>)
+            return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
         }
     }
 
@@ -211,7 +210,7 @@ function App() {
             <div className="marketContainer">
                 <div className="subContainer">
           <span>
-            <img className="logoImg" src="eth-logo.webp"/>
+            <img className="logoImg" src="market.png" alt={"market"}/>
           </span>
                     <span className="marketHeader">Ethereum Market</span>
                 </div>
@@ -227,7 +226,7 @@ function App() {
                     </div>
                 </div>
                 <div>
-                    {tokenSymbols.length > 0 && Object.keys(tokens).length > 0 && tokenSymbols.map((a,idx) => (
+                    {tokenSymbols.length > 0 && Object.keys(tokens).length > 0 && tokenSymbols.map((a, idx) => (
                         <div>
                             {tokenRow(a)}
                         </div>
@@ -252,8 +251,8 @@ function App() {
                                     <div className="col-md-2"></div>
                                 </div>
                             </div>
-                            <br />
-                            {assets.length > 0 && assets.map((a,idx) => (
+                            <br/>
+                            {assets.length > 0 && assets.map((a, idx) => (
                                 <div className="row">
                                     <div className="col-md-1">
                                         {displayLogo(a.tokenSymbol)}
@@ -272,7 +271,8 @@ function App() {
                                     </div>
                                     <div className="col-md-2">
                                         {a.open ? (
-                                            <div onClick={() => withdraw(a.positionId)} className="orangeMiniButton">Withdraw</div>
+                                            <div onClick={() => withdraw(a.positionId)}
+                                                 className="orangeMiniButton">Withdraw</div>
                                         ) : (
                                             <span>closed</span>
                                         )}

@@ -1,3 +1,5 @@
+const {moveTime} = require("../utils/move-time");
+
 
 
 async function main() {
@@ -44,7 +46,9 @@ async function main() {
     await staking.connect(owner).stakeTokens('WETH',ethers.utils.parseEther('10'))
 
 
+
     const provider = waffle.provider;
+
     const block = await provider.getBlock()
     const newCreatedDate = block.timestamp - (86400 * 365)
     await staking.connect(owner).modifyCreatedDate(1, newCreatedDate)
