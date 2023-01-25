@@ -12,31 +12,48 @@ async function getBalance(address) {
 }
 
 async function main() {
-    const [owner, account] = await ethers.getSigners();
-    const Staking = await ethers.getContractFactory("MyStaking", owner);
+    const [owner, datpd] = await ethers.getSigners();
 
-    const staking = await Staking.deploy({value: ethers.utils.parseEther('200')});
-    await staking.deployed();
+    const Staking = await ethers.getContractFactory('MyStaking', owner);
 
-    console.log("Staking's address = ", staking.address, owner.address)
+    const staking = await Staking.deploy(
+        187848,
+        {
+            value: ethers.utils.parseEther('100')
+        }
+    );
 
-    // 0x5FbDB2315678afecb367f032d93F642f64180aa3
-    console.log("Balance of account before = ", await getBalance(account.address));
-    console.log("===========================")
-    const totalStakeEther = ethers.utils.parseEther('100');
-    await staking.connect(account).stakeEther(180, {value: totalStakeEther});
-    // console.log("Balance of account after = ", await getBalance(account.address))
-    //
-    // console.log("===========================")
-    // await moveTime(SECONDS_IN_180_DAY)
-    // console.log("===========================")
-    // await staking.connect(account).closePosition(0);
-    // console.log("Balance of account after 180 days = ", await getBalance(account.address))
+    const Chainlink = await ethers.getContractFactory('Chainlink', datpd);
+    chainlink = await Chainlink.deploy();
+    const Tether = await ethers.getContractFactory('Tether', datpd);
+    tether = await Tether.deploy();
+    const UsdCoin = await ethers.getContractFactory('UsdCoin', datpd);
+    usdCoin = await UsdCoin.deploy();
+    const WrappedBitcoin = await ethers.getContractFactory('WrappedBitcoin', datpd);
+    wrappedBitcoin = await WrappedBitcoin.deploy();
+    const WrappedEther = await ethers.getContractFactory('WrappedEther', datpd);
+    wrappedEther = await WrappedEther.deploy();
 
-    console.log("===========================")
-    await staking.withdraw(ethers.utils.parseEther('100'))
-    console.log("Balance of owner = ", await getBalance(owner.address))
-    console.log("Balance of stakePool = ", await staking.getBalanceOfStaked())
+    await staking.connect(owner).addToken('Chainlink', 'LINK', chainlink.address, 867, 9999);
+    await staking.connect(owner).addToken('Tether', 'USDT', tether.address, 100, 200);
+    await staking.connect(owner).addToken('UsdCoin', 'USDC', usdCoin.address, 100, 200,);
+    await staking.connect(owner).addToken('WrappedBitcoin', 'WBTC', wrappedBitcoin.address, 2382096, 500);
+    await staking.connect(owner).addToken('WrappedEther', 'WETH', wrappedEther.address, 187848, 1000);
+
+    console.log("Staking:", staking.address);
+    console.log("Chainlink:", chainlink.address);
+    console.log("Tether:", tether.address);
+    console.log("UsdCoin:", usdCoin.address);
+    console.log("WrappedBitcoin:", wrappedBitcoin.address);
+    console.log("WrappedEther:", wrappedEther.address);
+
+    await chainlink.connect(datpd).approve(staking.address, ethers.utils.parseEther('50'));
+    await staking.connect(datpd).stakeTokens(chainlink.address, ethers.utils.parseEther('50'))
+    console.log("balance of datpd = ", await getBalance(datpd.address))
+
+    await staking.connect(datpd).closePosition(1);
+
+    console.log("balance of datpd = ", await getBalance(datpd.address))
 
 
 }
