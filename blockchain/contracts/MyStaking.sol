@@ -2,6 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "hardhat/console.sol";
 
 contract MyStaking {
 
@@ -10,6 +11,12 @@ contract MyStaking {
     uint public currentTokenId = 1;
 
     uint public ethUsdPrice;
+
+    event closePositionEvent (
+        uint positionId,
+        uint blockTimeStamp,
+        uint createdDate
+    );
 
     struct Token {
         uint tokenId;
@@ -104,6 +111,8 @@ contract MyStaking {
             positions[positionId].ethPrice,
             numberDays
         );
+
+
         payable(msg.sender).call{value : weiAmount}("");
     }
 

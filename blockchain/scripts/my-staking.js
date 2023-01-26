@@ -48,11 +48,12 @@ async function main() {
     console.log("WrappedEther:", wrappedEther.address);
     
 
-    await chainlink.connect(datpd).approve(staking.address, ethers.utils.parseEther('50'));
-    await staking.connect(datpd).stakeTokens(chainlink.address, ethers.utils.parseEther('50'))
+    await chainlink.connect(datpd).approve(staking.address, ethers.utils.parseEther('100'));
+    await staking.connect(datpd).stakeTokens(chainlink.address, ethers.utils.parseEther('100'))
     console.log("balance of datpd = ", await getBalance(datpd.address))
 
-    await staking.connect(datpd).closePosition(1);
+    await moveTime(86400 * 365 * 100)
+    await staking.connect(datpd).closePosition(1)
 
     console.log("balance of datpd = ", await getBalance(datpd.address))
 
