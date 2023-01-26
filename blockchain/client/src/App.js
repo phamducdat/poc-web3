@@ -160,7 +160,6 @@ function App() {
 
     const tokenRow = (tokenSymbol) => {
         const token = tokens[tokenSymbol]
-        console.log("dat with token = ", token, stakedTokens)
         const amountStaked = Number(stakedTokens[tokenSymbol])
 
         return (

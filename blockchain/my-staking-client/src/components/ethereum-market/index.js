@@ -4,6 +4,7 @@ import {ethers} from "ethers";
 import './index.css'
 
 import artifact from '../../artifacts/contracts/MyStaking.sol/MyStaking.json'
+import StakeModal from "./stake-modal";
 
 const displayLogo = symbol => {
 
@@ -21,66 +22,7 @@ const displayLogo = symbol => {
     }
 }
 
-const columns = [
-    {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
-    },
-    {
-        title: "Asset",
-        dataIndex: "asset",
-        key: 'asset',
-        render: (text, record) => {
-            return displayLogo(record.symbol)
-        }
-    },
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-    },
-    {
-        title: 'Symbol',
-        dataIndex: 'symbol',
-        key: 'symbol',
-    },
-    {
-        title: 'Price (USD)',
-        dataIndex: 'usdPrice',
-        key: 'usdPrice',
-        render: (text) => {
-            return (Number(text) / 100).toFixed(0)
-        }
-    },
-    {
-        title: 'Total Supplied',
-        dataIndex: 'totalSupplied',
-        key: 'totalSupplied',
-    },
-    {
-        title: 'APY',
-        dataIndex: 'apy',
-        key: 'apy',
-        render: (text) => {
-            return <>
-                {(Number(text) / 100).toFixed(0)}%
-            </>
-        }
-    },
-    {
-        title: "",
-        dataIndex: "stake",
-        key: "stake",
-        render: () => {
-            return <>
-                <Button type={"primary"}>
-                    Stake
-                </Button>
-            </>
-        }
-    }
-];
+
 const CONTRACT_ADDRESS = '0x0165878A594ca255338adfa4d48449f69242Eb8F'
 
 const EthereumMarket = props => {
@@ -90,7 +32,67 @@ const EthereumMarket = props => {
     const [tokenAddresses, setTokenAddresses] = useState([]);
     const [tokens, setTokens] = useState({});
     const [dataSource, setDataSource] = useState([]);
+    const [stakeModalOpen, setStakeModalOpen] = useState(false)
 
+
+    const columns = [
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            key: 'address',
+        },
+        {
+            title: "Asset",
+            dataIndex: "asset",
+            key: 'asset',
+            render: (text, record) => {
+                return displayLogo(record.symbol)
+            }
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Symbol',
+            dataIndex: 'symbol',
+            key: 'symbol',
+        },
+        {
+            title: 'Price (USD)',
+            dataIndex: 'usdPrice',
+            key: 'usdPrice',
+            render: (text) => {
+                return (Number(text) / 100).toFixed(0)
+            }
+        },
+        {
+            title: 'APY',
+            dataIndex: 'apy',
+            key: 'apy',
+            render: (text) => {
+                return <>
+                    {(Number(text) / 100).toFixed(0)}%
+                </>
+            }
+        },
+        {
+            title: "",
+            dataIndex: "stake",
+            key: "stake",
+            render: () => {
+                return <>
+                    <Button type={"primary"} onClick={() => {
+                        setStakeModalOpen(true)
+                    }}>
+                        Stake
+                    </Button>
+
+                </>
+            }
+        }
+    ];
 
     useEffect(() => {
 
@@ -137,10 +139,15 @@ const EthereumMarket = props => {
         <>
             {tokenAddresses?.length > 0 &&
                 <Table
-                columns={columns}
-                dataSource={mapDataSource()}
-            />}
+                    columns={columns}
+                    dataSource={mapDataSource()}
+                />}
 
+            <StakeModal
+                open={stakeModalOpen}
+                onOk={() => setStakeModalOpen(false)}
+                onCancel={() => setStakeModalOpen(false)}
+            />
 
         </>
     );

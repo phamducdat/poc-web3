@@ -2,6 +2,7 @@ import React from 'react';
 import {Content} from "antd/es/layout/layout";
 import {Card, Layout, Space} from "antd";
 import EthereumMarket from "./components/ethereum-market";
+import StakedAssets from "./components/staked-assets";
 
 const CONTRACT_ADDRESS = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
 const LINK_ADDRESS = '0x998abeb3E57409262aE5b751f60747921B33613E'
@@ -17,8 +18,8 @@ const App = props => {
                     <Card title={"Ethereum Market"}>
                         <EthereumMarket/>
                     </Card>
-                    <Card>
-                        test
+                    <Card title={"Staked Assets"}>
+                        <StakedAssets/>
                     </Card>
                 </Space>
             </Content>
