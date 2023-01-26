@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {Content} from "antd/es/layout/layout";
-import {Card, Layout, Space} from "antd";
+import {Button, Card, Layout, Space} from "antd";
 import EthereumMarket from "./components/ethereum-market";
 import StakedAssets from "./components/staked-assets";
 import {ethers} from "ethers";
@@ -13,16 +13,17 @@ const USDC_ADDRESS = '0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1'
 const WBTC_ADDRESS = '0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44'
 const WETH_ADDRESS = '0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f'
 
- const UserContext = createContext()
+const Web3AssetContext = createContext()
 
-export const UseUserContext = () => {
-    return useContext(UserContext)
+export const UseWeb3AssetContext = () => {
+    return useContext(Web3AssetContext)
 }
 const App = props => {
 
-    const [provider, setProvider] = useState(undefined);
 
+    const [provider, setProvider] = useState(undefined);
     const [contract, setContract] = useState(undefined);
+    const [signer, setSigner] = useState(undefined);
 
 
     useEffect(() => {
@@ -31,27 +32,50 @@ const App = props => {
             setProvider(provider)
             const contract = await new ethers.Contract(CONTRACT_ADDRESS, artifact.abi, provider)
             setContract(contract)
+
+
         }
         onLoad()
     }, [])
 
+    const getSigner = async () => {
+        return provider.getSigner()
+
+    }
+
+    const connectWallet = async () => {
+        const signer = await getSigner(provider)
+        setSigner(signer)
+    }
+
 
     return (
         <Layout style={{backgroundColor: "#f5f5f5"}}>
-            <UserContext.Provider value={[provider, contract]}>
+            <Web3AssetContext.Provider value={{
+                provider,
+                contract,
+                signer
+            }}>
                 {provider && contract && <Content style={{textAlign: 'center'}}>
                     <Space direction={"vertical"}>
-                        <Card title={"Ethereum Market"}>
+                        <Card title={"Ethereum Market"} key={"ethereumMarket"}>
                             <EthereumMarket/>
                         </Card>
-                        <Card title={"Staked Assets"}>
+                        <Card title={"Staked Assets"}
+                              key={"stakedAssets"}
+                              extra={<>
+                            <Button type={"primary"} onClick={connectWallet}>
+                                Connect Wallet
+                            </Button>
+                        </>}>
                             <StakedAssets/>
                         </Card>
                     </Space>
                 </Content>}
-            </UserContext.Provider>
+            </Web3AssetContext.Provider>
         </Layout>
-    );
+    )
+        ;
 };
 
 App.propTypes = {};

@@ -5,17 +5,16 @@ import './index.css'
 
 import StakeModal from "./stake-modal";
 import {displayLogo} from "../../utils";
-import {UseUserContext} from "../../App";
+import {UseWeb3AssetContext} from "../../App";
 
 
 
 
 const EthereumMarket = props => {
 
-    const [provider, contract] = UseUserContext()
+    const {contract, signer} = UseWeb3AssetContext()
     const [tokenAddresses, setTokenAddresses] = useState([]);
     const [tokens, setTokens] = useState({});
-    const [dataSource, setDataSource] = useState([]);
     const [stakeModalOpen, setStakeModalOpen] = useState(false)
     const [tokenChosen, setTokenChosen] = useState(undefined)
 
@@ -68,12 +67,12 @@ const EthereumMarket = props => {
             key: "stake",
             render: (text, record) => {
                 return <>
-                    <Button type={"primary"} onClick={() => {
+                    {signer !== undefined && <Button type={"primary"} onClick={() => {
                         setStakeModalOpen(true)
                         setTokenChosen(record)
                     }}>
                         Stake
-                    </Button>
+                    </Button>}
 
                 </>
             }

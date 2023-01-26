@@ -1,13 +1,16 @@
 import React from 'react';
 import {Form, InputNumber, Modal} from "antd";
 import {displayLogo} from "../../../utils";
+import {UseWeb3AssetContext} from "../../../App";
+import {ethers} from "ethers";
 
 const StakeModal = props => {
 
+    const {signer, contract} = UseWeb3AssetContext()
 
-    const onFinish = (value) => {
 
-    }
+
+
 
     return (
         <>
@@ -18,7 +21,7 @@ const StakeModal = props => {
                 {...props}>
 
                 <Form>
-                    <Form.Item name={"token"} label={displayLogo(props?.data?.symbol)}>
+                    <Form.Item name={"tokenQuantity"} label={displayLogo(props?.data?.symbol)}>
                         <InputNumber
                             style={{width: "100%"}}
                         />
