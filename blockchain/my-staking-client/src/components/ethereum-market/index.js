@@ -15,7 +15,7 @@ const displayLogo = symbol => {
     } else if (symbol === 'USDC') {
         return (<><img className="logoImg" src="usdc.png" alt={"usdc"}/></>)
     } else if (symbol === 'WBTC') {
-        return (<><img className="logoImg" src="btc.png" alt={"wbtc"}/></>)
+        return (<><img className="logoImg" src="wbtc.png" alt={"wbtc"}/></>)
     } else if (symbol === 'WETH') {
         return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
     }
@@ -135,8 +135,8 @@ const EthereumMarket = props => {
 
     return (
         <>
-            {tokenAddresses?.length > 0 && <Table
-
+            {tokenAddresses?.length > 0 &&
+                <Table
                 columns={columns}
                 dataSource={mapDataSource()}
             />}

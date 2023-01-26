@@ -14,7 +14,7 @@ const App = props => {
         <Layout style={{backgroundColor:"#f5f5f5"}}>
             <Content style={{textAlign: 'center'}}>
                 <Space direction={"vertical"}>
-                    <Card>
+                    <Card title={"Ethereum Market"}>
                         <EthereumMarket/>
                     </Card>
                     <Card>
