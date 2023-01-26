@@ -1,14 +1,39 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Table} from "antd";
 import {ethers} from "ethers";
+import './index.css'
 
 import artifact from '../../artifacts/contracts/MyStaking.sol/MyStaking.json'
+
+const displayLogo = symbol => {
+
+
+    if (symbol === 'LINK') {
+        return (<><img className="logoImg" src="link.png" alt={"link"}/></>)
+    } else if (symbol === 'USDT') {
+        return (<><img className="logoImg" src="usdt.png" alt={"usdt"}/></>)
+    } else if (symbol === 'USDC') {
+        return (<><img className="logoImg" src="usdc.png" alt={"usdc"}/></>)
+    } else if (symbol === 'WBTC') {
+        return (<><img className="logoImg" src="btc.png" alt={"wbtc"}/></>)
+    } else if (symbol === 'WETH') {
+        return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
+    }
+}
 
 const columns = [
     {
         title: 'Address',
         dataIndex: 'address',
         key: 'address',
+    },
+    {
+        title: "Asset",
+        dataIndex: "asset",
+        key: 'asset',
+        render: (text, record) => {
+            return displayLogo(record.symbol)
+        }
     },
     {
         title: 'Name',
@@ -46,7 +71,7 @@ const columns = [
     {
         title: "",
         dataIndex: "stake",
-        key:"stake",
+        key: "stake",
         render: () => {
             return <>
                 <Button type={"primary"}>
@@ -93,20 +118,6 @@ const EthereumMarket = props => {
 
     }, [])
 
-
-    const displayLogo = symbol => {
-        if (symbol === 'LINK') {
-            return (<><img className="logoImg" src="link.png" alt={"link"}/></>)
-        } else if (symbol === 'USDT') {
-            return (<><img className="logoImg" src="usdt.png" alt={"usdt"}/></>)
-        } else if (symbol === 'USDC') {
-            return (<><img className="logoImg" src="usdc.png" alt={"usdc"}/></>)
-        } else if (symbol === 'WBTC') {
-            return (<><img className="logoImg" src="btc.png" alt={"btc"}/></>)
-        } else if (symbol === 'WETH') {
-            return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
-        }
-    }
 
     const mapDataSource = () => {
         if (tokenAddresses?.length > 0) {
