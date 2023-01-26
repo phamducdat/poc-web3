@@ -6,15 +6,14 @@ import './index.css'
 import artifact from '../../artifacts/contracts/MyStaking.sol/MyStaking.json'
 import StakeModal from "./stake-modal";
 import {displayLogo} from "../../utils";
-
-
+import {UseUserContext} from "../../App";
 
 
 const CONTRACT_ADDRESS = '0x0165878A594ca255338adfa4d48449f69242Eb8F'
 
 const EthereumMarket = props => {
 
-    const [provider, setProvider] = useState(undefined);
+    const provider = UseUserContext()
     const [contract, setContract] = useState(undefined);
     const [tokenAddresses, setTokenAddresses] = useState([]);
     const [tokens, setTokens] = useState({});
@@ -86,8 +85,7 @@ const EthereumMarket = props => {
     useEffect(() => {
 
         const onLoad = async () => {
-            const provider = await new ethers.providers.Web3Provider(window.ethereum)
-            setProvider(provider)
+
 
             const contract = await new ethers.Contract(CONTRACT_ADDRESS, artifact.abi, provider)
             setContract(contract)
