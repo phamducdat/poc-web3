@@ -30,6 +30,9 @@ contract MyStaking {
         uint createdDate;
         uint tokenQuantity;
         bool open;
+        uint usdPrice;
+        uint ethPrice;
+        uint apy;
     }
 
     mapping(address => Token) public tokens;
@@ -71,7 +74,10 @@ contract MyStaking {
             tokenAddress,
             block.timestamp,
             tokenQuantity,
-            true
+            true,
+            tokens[tokenAddress].usdPrice * tokenQuantity,
+            (tokens[tokenAddress].usdPrice * tokenQuantity) / ethUsdPrice,
+            tokens[tokenAddress].apy
         );
 
         currentPositionId += 1;
@@ -94,16 +100,16 @@ contract MyStaking {
 
         uint numberDays = calculateNumberDays(positions[positionId].createdDate);
         uint weiAmount = calculateInterest(
-            tokens[positions[positionId].tokenAddress].apy,
-            tokens[positions[positionId].tokenAddress].ethPrice,
-            positions[positionId].tokenQuantity
+            positions[positionId].apy,
+            positions[positionId].ethPrice,
+            numberDays
         );
         payable(msg.sender).call{value : weiAmount}("");
     }
 
-    function calculateInterest(uint apy, uint ethPrice, uint quantity)
+    function calculateInterest(uint apy, uint ethPrice, uint numberDays)
     public pure returns (uint) {
-        return (apy * 10 * 10 ** 18 / 10000) + quantity;
+        return apy * ethPrice * numberDays / 10000 / 356;
     }
 
     function calculateNumberDays(uint createdDate) public view returns (uint) {

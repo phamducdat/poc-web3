@@ -13,12 +13,12 @@ import './App.css';
 
 import StakeModal from './components/StakeModal'
 
-const CONTRACT_ADDRESS = '0x1343248Cbd4e291C6979e70a138f4c774e902561'
-const LINK_ADDRESS = '0x22a9B82A6c3D2BFB68F324B2e8367f346Dd6f32a'
-const USDT_ADDRESS = '0x547382C0D1b23f707918D3c83A77317B71Aa8470'
-const USDC_ADDRESS = '0x7C8BaafA542c57fF9B2B90612bf8aB9E86e22C09'
-const WBTC_ADDRESS = '0x0a17FabeA4633ce714F1Fa4a2dcA62C3bAc4758d'
-const WETH_ADDRESS = '0x5e6CB7E728E1C320855587E1D9C6F7972ebdD6D5'
+const CONTRACT_ADDRESS = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
+const LINK_ADDRESS = '0x998abeb3E57409262aE5b751f60747921B33613E'
+const USDT_ADDRESS = '0x59b670e9fA9D0A427751Af201D676719a970857b'
+const USDC_ADDRESS = '0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1'
+const WBTC_ADDRESS = '0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44'
+const WETH_ADDRESS = '0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f'
 
 
 function App() {
@@ -159,6 +159,7 @@ function App() {
 
     const tokenRow = (tokenSymbol) => {
         const token = tokens[tokenSymbol]
+        console.log("dat with token = ", token, stakedTokens)
         const amountStaked = Number(stakedTokens[tokenSymbol])
 
         return (
@@ -204,6 +205,7 @@ function App() {
             return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
         }
     }
+
 
     return (
         <div className="App">

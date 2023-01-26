@@ -46,6 +46,7 @@ async function main() {
     console.log("UsdCoin:", usdCoin.address);
     console.log("WrappedBitcoin:", wrappedBitcoin.address);
     console.log("WrappedEther:", wrappedEther.address);
+    
 
     await chainlink.connect(datpd).approve(staking.address, ethers.utils.parseEther('50'));
     await staking.connect(datpd).stakeTokens(chainlink.address, ethers.utils.parseEther('50'))
