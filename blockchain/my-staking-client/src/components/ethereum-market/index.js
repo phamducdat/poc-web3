@@ -3,18 +3,16 @@ import {Button, Table} from "antd";
 import {ethers} from "ethers";
 import './index.css'
 
-import artifact from '../../artifacts/contracts/MyStaking.sol/MyStaking.json'
 import StakeModal from "./stake-modal";
 import {displayLogo} from "../../utils";
 import {UseUserContext} from "../../App";
 
 
-const CONTRACT_ADDRESS = '0x0165878A594ca255338adfa4d48449f69242Eb8F'
+
 
 const EthereumMarket = props => {
 
-    const provider = UseUserContext()
-    const [contract, setContract] = useState(undefined);
+    const [provider, contract] = UseUserContext()
     const [tokenAddresses, setTokenAddresses] = useState([]);
     const [tokens, setTokens] = useState({});
     const [dataSource, setDataSource] = useState([]);
@@ -85,10 +83,6 @@ const EthereumMarket = props => {
     useEffect(() => {
 
         const onLoad = async () => {
-
-
-            const contract = await new ethers.Contract(CONTRACT_ADDRESS, artifact.abi, provider)
-            setContract(contract)
 
             const tokenAddresses = await contract.getTokenAddresses()
             setTokenAddresses(tokenAddresses)
