@@ -1,10 +1,17 @@
 import React from 'react';
 import {Modal} from "antd";
+import {displayLogo} from "../../../utils";
 
 const StakeModal = props => {
     return (
         <>
-            <Modal{...props}/>
+            <Modal
+                title={<>
+                    Stake {displayLogo(props.data.symbol)} {props.data.symbol}
+                </>}
+                {...props}>
+
+            </Modal>
 
         </>
     );

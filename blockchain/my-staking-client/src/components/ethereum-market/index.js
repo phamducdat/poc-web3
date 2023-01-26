@@ -5,22 +5,9 @@ import './index.css'
 
 import artifact from '../../artifacts/contracts/MyStaking.sol/MyStaking.json'
 import StakeModal from "./stake-modal";
+import {displayLogo} from "../../utils";
 
-const displayLogo = symbol => {
 
-
-    if (symbol === 'LINK') {
-        return (<><img className="logoImg" src="link.png" alt={"link"}/></>)
-    } else if (symbol === 'USDT') {
-        return (<><img className="logoImg" src="usdt.png" alt={"usdt"}/></>)
-    } else if (symbol === 'USDC') {
-        return (<><img className="logoImg" src="usdc.png" alt={"usdc"}/></>)
-    } else if (symbol === 'WBTC') {
-        return (<><img className="logoImg" src="wbtc.png" alt={"wbtc"}/></>)
-    } else if (symbol === 'WETH') {
-        return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
-    }
-}
 
 
 const CONTRACT_ADDRESS = '0x0165878A594ca255338adfa4d48449f69242Eb8F'
@@ -33,6 +20,7 @@ const EthereumMarket = props => {
     const [tokens, setTokens] = useState({});
     const [dataSource, setDataSource] = useState([]);
     const [stakeModalOpen, setStakeModalOpen] = useState(false)
+    const [tokenChosen, setTokenChosen] = useState(undefined)
 
 
     const columns = [
@@ -81,10 +69,11 @@ const EthereumMarket = props => {
             title: "",
             dataIndex: "stake",
             key: "stake",
-            render: () => {
+            render: (text, record) => {
                 return <>
                     <Button type={"primary"} onClick={() => {
                         setStakeModalOpen(true)
+                        setTokenChosen(record)
                     }}>
                         Stake
                     </Button>
@@ -147,6 +136,7 @@ const EthereumMarket = props => {
                 open={stakeModalOpen}
                 onOk={() => setStakeModalOpen(false)}
                 onCancel={() => setStakeModalOpen(false)}
+                data={tokenChosen}
             />
 
         </>
