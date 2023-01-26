@@ -44,12 +44,25 @@ contract MyStaking {
 
     mapping(address => Token) public tokens;
     mapping(uint => Position) public positions;
+    address [] public tokenAddresses;
 
 
     constructor(uint currentEthPrice) payable {
         ethUsdPrice = currentEthPrice;
         owner = msg.sender;
     }
+
+
+
+    function getTokenAddresses() public view returns (address[] memory)  {
+        return tokenAddresses;
+    }
+
+    function getTokenByTokenAddress(address tokenAddress) public view returns(Token memory) {
+        return tokens[tokenAddress];
+    }
+
+
     function addToken(
         string calldata name,
         string calldata symbol,
@@ -58,6 +71,7 @@ contract MyStaking {
         uint apy
     ) external onlyOwner {
 
+        tokenAddresses.push(tokenAddress);
         tokens[tokenAddress] = Token(
             currentTokenId,
             name,

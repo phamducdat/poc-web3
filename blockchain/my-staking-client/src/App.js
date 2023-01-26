@@ -1,6 +1,7 @@
 import React from 'react';
 import {Content} from "antd/es/layout/layout";
 import {Card, Layout, Space} from "antd";
+import EthereumMarket from "./components/ethereum-market";
 
 const CONTRACT_ADDRESS = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
 const LINK_ADDRESS = '0x998abeb3E57409262aE5b751f60747921B33613E'
@@ -14,7 +15,7 @@ const App = props => {
             <Content style={{textAlign: 'center'}}>
                 <Space direction={"vertical"}>
                     <Card>
-                        datpd
+                        <EthereumMarket/>
                     </Card>
                     <Card>
                         test
