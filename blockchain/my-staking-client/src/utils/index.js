@@ -35,7 +35,7 @@ export const LinkToAddressToken = (tokenAddress) => {
             <Button icon={<CopyOutlined/>}
                     onClick={() => {
                         navigator.clipboard.writeText(tokenAddress)
-                        message.success(`Copy ${tokenAddress}`)
+                        message.success(`Copied ${tokenAddress}`)
                     }}
                     type={"text"}/>
         </Col>

@@ -5,13 +5,18 @@ import EthereumMarket from "./components/ethereum-market";
 import StakedAssets from "./components/staked-assets";
 import {ethers} from "ethers";
 import artifact from "./artifacts/contracts/MyStaking.sol/MyStaking.json";
+import linkArtifact from './artifacts/contracts/Chainlink.sol/Chainlink.json'
+import usdtArtifact from './artifacts/contracts/Tether.sol/Tether.json'
+import usdcArtifact from './artifacts/contracts/UsdCoin.sol/UsdCoin.json'
+import wbtcArtifact from './artifacts/contracts/WrappedBitcoin.sol/WrappedBitcoin.json'
+import wethArtifact from './artifacts/contracts/WrappedEther.sol/WrappedEther.json'
 
 const CONTRACT_ADDRESS = '0x7A28cf37763279F774916b85b5ef8b64AB421f79'
 const LINK_ADDRESS = '0x2BB8B93F585B43b06F3d523bf30C203d3B6d4BD4'
-const USDT_ADDRESS = '0x59b670e9fA9D0A427751Af201D676719a970857b'
-const USDC_ADDRESS = '0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1'
-const WBTC_ADDRESS = '0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44'
-const WETH_ADDRESS = '0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f'
+const USDT_ADDRESS = '0xB7ca895F81F20e05A5eb11B05Cbaab3DAe5e23cd'
+const USDC_ADDRESS = '0xd0EC100F1252a53322051a95CF05c32f0C174354'
+const WBTC_ADDRESS = '0x2d13826359803522cCe7a4Cfa2c1b582303DD0B4'
+const WETH_ADDRESS = '0xCa57C1d3c2c35E667745448Fef8407dd25487ff8'
 
 const Web3AssetContext = createContext()
 
@@ -26,7 +31,10 @@ const App = props => {
     const [signer, setSigner] = useState(undefined);
     const [isConnected, setIsConnected] = useState(false);
     const [tokenAddresses, setTokenAddresses] = useState([]);
+    const [tokenContracts, setTokenContracts] = useState({})
     const [tokens, setTokens] = useState({});
+
+    const [reloadStakeAssets, setReloadStakeAssets] = useState(false)
 
 
     useEffect(() => {
@@ -46,6 +54,18 @@ const App = props => {
                     [tokenAddress]: token
                 }))
             })
+
+            const linkContract = await new ethers.Contract(LINK_ADDRESS, linkArtifact.abi, provider)
+            const usdtContract = await new ethers.Contract(USDT_ADDRESS, usdtArtifact.abi, provider)
+            const usdcContract = await new ethers.Contract(USDC_ADDRESS, usdcArtifact.abi, provider)
+            const wbtcContract = await new ethers.Contract(WBTC_ADDRESS, wbtcArtifact.abi, provider)
+            const wethContract = await new ethers.Contract(WETH_ADDRESS, wethArtifact.abi, provider)
+
+            setTokenContracts(prev => ({...prev, [linkContract.address]: linkContract}))
+            setTokenContracts(prev => ({...prev, [usdtContract.address]: usdtContract}))
+            setTokenContracts(prev => ({...prev, [usdcContract.address]: usdcContract}))
+            setTokenContracts(prev => ({...prev, [wbtcContract.address]: wbtcContract}))
+            setTokenContracts(prev => ({...prev, [wethContract.address]: wethContract}))
         }
         onLoad()
     }, [])
@@ -69,6 +89,7 @@ const App = props => {
     }
 
 
+
     return (
         <Layout style={{backgroundColor: "#f5f5f5"}}>
             <Web3AssetContext.Provider value={{
@@ -77,7 +98,10 @@ const App = props => {
                 signer,
                 isConnected,
                 tokenAddresses,
-                tokens
+                tokens,
+                tokenContracts,
+                setReloadStakeAssets,
+                reloadStakeAssets
             }}>
                 {provider && contract && <Content style={{textAlign: 'center'}}>
                     <Space direction={"vertical"}>
@@ -91,7 +115,7 @@ const App = props => {
                         <Card
                             style={{width: "1500px"}}
                             title={"Staked Assets"}
-                            key={"stakedAssets"}
+                            key={reloadStakeAssets}
                             extra={<>
                                 {!isConnected && <Button type={"primary"} onClick={connectWallet}>
                                     Connect Wallet

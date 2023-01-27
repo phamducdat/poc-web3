@@ -2,10 +2,16 @@ import React, {useMemo, useState} from 'react';
 import {Button, Table} from "antd";
 import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
+import './index.css'
 
 const StakedAssets = props => {
 
-    const {contract, signer, tokens, isConnected} = UseWeb3AssetContext()
+    const {contract,
+        signer,
+        tokens,
+        isConnected,
+        reloadStakeAssets,
+        setReloadStakeAssets} = UseWeb3AssetContext()
     const [positionIds, setPositionIds] = useState()
     const [dataSource, setDataSource] = useState([])
 
@@ -15,42 +21,47 @@ const StakedAssets = props => {
         return Number(accruedInterest)
     }
 
+    async function getData() {
+        await setDataSource([])
+        await   setPositionIds(undefined)
+        const positionIdsHex = await contract.connect(signer).getPositionIdsByWalletAddress()
+        const positionIds = positionIdsHex.map(id => Number(id))
+        setPositionIds(positionIds)
+
+
+        const positions = await Promise.all(
+            positionIds.map(id =>
+                contract.connect(signer).getPositionById(
+                    Number(id)
+                ))
+        )
+
+        positions.map(async position => {
+            const token = tokens[position.tokenAddress]
+
+            const ethAccruedInterestWei =
+                await calcAccruedInterest(position.apy,
+                    position.ethPrice,
+                    position.createdDate)
+
+            const ethAccruedInterest = toEther(ethAccruedInterestWei)
+
+            const data = {
+                ...position,
+                asset: token.asset,
+                symbol: token.symbol,
+                ethAccruedInterest,
+            }
+            setDataSource(prev => [...prev, data])
+        })
+    }
+
     useMemo(() => {
         const onLoad = async () => {
             if (isConnected) {
-                const positionIdsHex = await contract.connect(signer).getPositionIdsByWalletAddress()
-                const positionIds = positionIdsHex.map(id => Number(id))
-                setPositionIds(positionIds)
-
-
-                const positions = await Promise.all(
-                    positionIds.map(id =>
-                        contract.connect(signer).getPositionById(
-                            Number(id)
-                        ))
-                )
-
-                positions.map(async position => {
-                    const token = tokens[position.tokenAddress]
-
-                    const ethAccruedInterestWei =
-                        await calcAccruedInterest(position.apy,
-                            position.ethPrice,
-                            position.createdDate)
-
-                    const ethAccruedInterest = toEther(ethAccruedInterestWei)
-
-                    const data = {
-                        ...position,
-                        asset: token.asset,
-                        symbol: token.symbol,
-                        ethAccruedInterest,
-                    }
-                    setDataSource(prev => [...prev, data])
-                })
-
+                await getData();
+                setReloadStakeAssets(false)
             }
-
         }
         onLoad()
 
@@ -120,12 +131,12 @@ const StakedAssets = props => {
 
 
     return (
-        <>
+        <div>
             <Table
                 columns={columns}
                 dataSource={dataSource}
             />
-        </>
+        </div>
     );
 };
 

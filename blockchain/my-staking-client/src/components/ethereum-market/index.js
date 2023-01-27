@@ -1,13 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, Table} from "antd";
-import {ethers} from "ethers";
 import './index.css'
 
 import StakeModal from "./stake-modal";
 import {displayLogo, LinkToAddressToken} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
-
-
 
 
 const EthereumMarket = props => {
@@ -69,12 +66,15 @@ const EthereumMarket = props => {
             key: "stake",
             render: (text, record) => {
                 return <>
-                    {signer !== undefined && <Button type={"primary"} onClick={() => {
-                        setStakeModalOpen(true)
-                        setTokenChosen(record)
-                    }}>
-                        Stake
-                    </Button>}
+                    {signer !== undefined &&
+                        <Button
+                            style={{backgroundColor: "#87d068"}}
+                            onClick={() => {
+                                setStakeModalOpen(true)
+                                setTokenChosen(record)
+                            }}>
+                            Stake
+                        </Button>}
 
                 </>
             }
