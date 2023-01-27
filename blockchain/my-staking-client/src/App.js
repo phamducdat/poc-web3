@@ -6,7 +6,7 @@ import StakedAssets from "./components/staked-assets";
 import {ethers} from "ethers";
 import artifact from "./artifacts/contracts/MyStaking.sol/MyStaking.json";
 
-const CONTRACT_ADDRESS = '0x8bEe2037448F096900Fd9affc427d38aE6CC0350'
+const CONTRACT_ADDRESS = '0x7A28cf37763279F774916b85b5ef8b64AB421f79'
 const LINK_ADDRESS = '0x998abeb3E57409262aE5b751f60747921B33613E'
 const USDT_ADDRESS = '0x59b670e9fA9D0A427751Af201D676719a970857b'
 const USDC_ADDRESS = '0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1'

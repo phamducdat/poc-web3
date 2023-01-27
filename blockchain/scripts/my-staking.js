@@ -62,7 +62,15 @@ async function main() {
     await wrappedEther.connect(owner).approve(staking.address, ethers.utils.parseEther('10'));
     await staking.connect(owner).stakeTokens(wrappedEther.address, ethers.utils.parseEther('10'))
 
+    const provider = waffle.provider;
 
+    const block = await provider.getBlock()
+    const newCreatedDate = block.timestamp - (86400 * 365)
+    await staking.connect(owner).modifyCreatedDate(1, newCreatedDate)
+    await staking.connect(owner).modifyCreatedDate(2, newCreatedDate)
+    await staking.connect(owner).modifyCreatedDate(3, newCreatedDate)
+    await staking.connect(owner).modifyCreatedDate(4, newCreatedDate)
+    await staking.connect(owner).modifyCreatedDate(5, newCreatedDate)
 
 }
 
