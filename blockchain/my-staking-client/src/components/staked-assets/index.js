@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Table} from "antd";
-import {displayLogo} from "../../utils";
+import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 
 const StakedAssets = props => {
@@ -11,20 +11,31 @@ const StakedAssets = props => {
 
     useEffect(() => {
         const onLoad = async () => {
-            console.log("dat with signer = ", signer)
             const positionIds = await contract.connect(signer).getPositionIdsByWalletAddress()
-            console.log("dat with positionIds = ", positionIds)
+            setPositionIds(positionIds)
+
+            positionIds.map(async positionId => {
+                const position = await contract.getPositionByPositionId(positionId)
+                setPositions(prev => ({
+                    ...prev,
+                    [positionId]: position
+                }))
+            })
 
         }
         onLoad()
 
     },[])
 
+
     const columns = [
         {
-            title: 'Address',
-            dataIndex: 'address',
+            title: 'Token Address',
+            dataIndex: 'tokenAddress',
             key: 'address',
+            render: (text) => {
+                return LinkToAddressToken(text)
+            }
         },
         {
             title: "Asset",
@@ -41,8 +52,11 @@ const StakedAssets = props => {
         },
         {
             title: "Market Value (USD)",
-            dataIndex: "marketValue",
-            key: "marketValue",
+            dataIndex: "usdPrice",
+            key: "usdPrice",
+            render: (text) => {
+                return toEther(text)/100
+            }
         },
         {
             title: "Accrued Interest (USD)",
@@ -56,10 +70,22 @@ const StakedAssets = props => {
         }
     ]
 
+    const mapDataSource = () => {
+        if (positionIds?.length > 0 && positions !== undefined) {
+            return positionIds?.map(positionId => {
+                const position =positions[positionId]
+                return {
+                        ...position
+                }
+            })
+        }
+    }
+
     return (
         <>
             <Table
                 columns={columns}
+                dataSource={mapDataSource()}
             />
         </>
     );

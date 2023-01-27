@@ -1,3 +1,5 @@
+import {ethers} from "ethers";
+import {Link} from "react-router-dom";
 
 export const displayLogo = symbol => {
 
@@ -13,4 +15,14 @@ export const displayLogo = symbol => {
     } else if (symbol === 'WETH') {
         return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
     }
+}
+
+export const toEther = wei => Number(ethers.utils.formatEther(String(wei))).toFixed(2);
+
+export const LinkToAddressToken = (tokenAddress) => {
+    return   <Link to={`https://etherscan.io/token/${tokenAddress}`}
+    target={"_blank"}
+    >
+        {tokenAddress}
+    </Link>
 }

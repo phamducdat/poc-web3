@@ -4,7 +4,7 @@ import {ethers} from "ethers";
 import './index.css'
 
 import StakeModal from "./stake-modal";
-import {displayLogo} from "../../utils";
+import {displayLogo, LinkToAddressToken} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 
 
@@ -24,6 +24,9 @@ const EthereumMarket = props => {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
+            render: (text) => {
+                return LinkToAddressToken(text)
+            }
         },
         {
             title: "Asset",

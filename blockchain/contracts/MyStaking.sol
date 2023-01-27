@@ -110,6 +110,7 @@ contract MyStaking {
             tokens[tokenAddress].apy
         );
 
+        positionIdsByWalletAddress[msg.sender].push(currentPositionId);
         currentPositionId += 1;
     }
 
