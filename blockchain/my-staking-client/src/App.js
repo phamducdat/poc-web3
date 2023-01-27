@@ -6,7 +6,7 @@ import StakedAssets from "./components/staked-assets";
 import {ethers} from "ethers";
 import artifact from "./artifacts/contracts/MyStaking.sol/MyStaking.json";
 
-const CONTRACT_ADDRESS = '0x0165878A594ca255338adfa4d48449f69242Eb8F'
+const CONTRACT_ADDRESS = '0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75'
 const LINK_ADDRESS = '0x998abeb3E57409262aE5b751f60747921B33613E'
 const USDT_ADDRESS = '0x59b670e9fA9D0A427751Af201D676719a970857b'
 const USDC_ADDRESS = '0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1'
@@ -24,6 +24,7 @@ const App = props => {
     const [provider, setProvider] = useState(undefined);
     const [contract, setContract] = useState(undefined);
     const [signer, setSigner] = useState(undefined);
+    const [isConnected, setIsConnected] = useState(false);
 
 
     useEffect(() => {
@@ -32,15 +33,22 @@ const App = props => {
             setProvider(provider)
             const contract = await new ethers.Contract(CONTRACT_ADDRESS, artifact.abi, provider)
             setContract(contract)
-
-
         }
         onLoad()
     }, [])
 
-    const getSigner = async () => {
-        return provider.getSigner()
+    useEffect(() => {
+        if (signer !== undefined)
+            setIsConnected(true)
+        else
+            setIsConnected(false)
+    },[signer])
 
+    const getSigner = async () => {
+        const signer = provider.getSigner();
+        console.log("dat with signer = ", signer)
+        setSigner(signer)
+        return signer
     }
 
     const connectWallet = async () => {
@@ -54,7 +62,8 @@ const App = props => {
             <Web3AssetContext.Provider value={{
                 provider,
                 contract,
-                signer
+                signer,
+                isConnected
             }}>
                 {provider && contract && <Content style={{textAlign: 'center'}}>
                     <Space direction={"vertical"}>
@@ -64,11 +73,11 @@ const App = props => {
                         <Card title={"Staked Assets"}
                               key={"stakedAssets"}
                               extra={<>
-                            <Button type={"primary"} onClick={connectWallet}>
-                                Connect Wallet
-                            </Button>
-                        </>}>
-                            <StakedAssets/>
+                                  {!isConnected && <Button type={"primary"} onClick={connectWallet}>
+                                      Connect Wallet
+                                  </Button>}
+                              </>}>
+                            {isConnected && <StakedAssets/>}
                         </Card>
                     </Space>
                 </Content>}

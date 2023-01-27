@@ -45,6 +45,7 @@ contract MyStaking {
     mapping(address => Token) public tokens;
     mapping(uint => Position) public positions;
     address [] public tokenAddresses;
+    mapping(address => uint[]) public positionIdsByWalletAddress;
 
 
     constructor(uint currentEthPrice) payable {
@@ -54,11 +55,19 @@ contract MyStaking {
 
 
 
+    function getPositionIdsByWalletAddress() public view returns (uint256[] memory) {
+        return positionIdsByWalletAddress[msg.sender];
+    }
+
+    function getPositionByPositionId(uint positionId) public view returns (Position memory) {
+        return positions[positionId];
+    }
+
     function getTokenAddresses() public view returns (address[] memory)  {
         return tokenAddresses;
     }
 
-    function getTokenByTokenAddress(address tokenAddress) public view returns(Token memory) {
+    function getTokenByTokenAddress(address tokenAddress) public view returns (Token memory) {
         return tokens[tokenAddress];
     }
 
