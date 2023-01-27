@@ -3,15 +3,19 @@ import {Button, Table} from "antd";
 import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 import './index.css'
+import {ethers} from "ethers";
+import moment from 'moment'
 
 const StakedAssets = props => {
 
-    const {contract,
+    const {
+        contract,
         signer,
         tokens,
         isConnected,
         reloadStakeAssets,
-        setReloadStakeAssets} = UseWeb3AssetContext()
+        setReloadStakeAssets
+    } = UseWeb3AssetContext()
     const [positionIds, setPositionIds] = useState()
     const [dataSource, setDataSource] = useState([])
 
@@ -23,7 +27,7 @@ const StakedAssets = props => {
 
     async function getData() {
         await setDataSource([])
-        await   setPositionIds(undefined)
+        await setPositionIds(undefined)
         const positionIdsHex = await contract.connect(signer).getPositionIdsByWalletAddress()
         const positionIds = positionIdsHex.map(id => Number(id))
         setPositionIds(positionIds)
@@ -102,14 +106,19 @@ const StakedAssets = props => {
             }
         },
         {
-            title: "Accrued Interest (USD)",
-            dataIndex: "accruedInterest",
-            key: "accruedInterest",
-        },
-        {
             title: "Accrued Interest (ETH)",
             dataIndex: "ethAccruedInterest",
             key: "ethAccruedInterest"
+        },
+        {
+            title: "Created Date",
+            dataIndex: "createdDate",
+            key: "createdDate",
+            render: (text) => {
+
+                const timeInSeconds = parseInt(text._hex, 16)
+                return moment(timeInSeconds * 1000).format("DD/MM/YYYY HH:MM:SS")
+            }
         },
         {
             title: "",
@@ -118,8 +127,10 @@ const StakedAssets = props => {
             render: (text, record) => {
                 return <>
                     {text ? <Button type={"primary"}
-                                    onClick={() => {
-                                        contract.connect(signer).closePosition(record.positionId)
+                                    onClick={async () => {
+                                        const res = await contract.connect(signer).closePosition(record.positionId)
+                                        await res.wait()
+                                        setReloadStakeAssets(true)
                                     }}
                         >Withdraw</Button>
                         : <Button disabled={true}>Close</Button>}
