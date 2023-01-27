@@ -25,6 +25,8 @@ const App = props => {
     const [contract, setContract] = useState(undefined);
     const [signer, setSigner] = useState(undefined);
     const [isConnected, setIsConnected] = useState(false);
+    const [tokenAddresses, setTokenAddresses] = useState([]);
+    const [tokens, setTokens] = useState({});
 
 
     useEffect(() => {
@@ -33,6 +35,17 @@ const App = props => {
             setProvider(provider)
             const contract = await new ethers.Contract(CONTRACT_ADDRESS, artifact.abi, provider)
             setContract(contract)
+
+            const tokenAddresses = await contract.getTokenAddresses()
+            setTokenAddresses(tokenAddresses)
+
+            tokenAddresses.map(async tokenAddress => {
+                const token = await contract.getTokenByTokenAddress(tokenAddress)
+                setTokens(prev => ({
+                    ...prev,
+                    [tokenAddress]: token
+                }))
+            })
         }
         onLoad()
     }, [])
@@ -62,7 +75,9 @@ const App = props => {
                 provider,
                 contract,
                 signer,
-                isConnected
+                isConnected,
+                tokenAddresses,
+                tokens
             }}>
                 {provider && contract && <Content style={{textAlign: 'center'}}>
                     <Space direction={"vertical"}>

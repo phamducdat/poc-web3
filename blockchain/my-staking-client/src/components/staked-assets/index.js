@@ -1,31 +1,59 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Table} from "antd";
 import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 
 const StakedAssets = props => {
 
-    const {contract, signer} = UseWeb3AssetContext()
+    const {contract, signer, tokens, isConnected} = UseWeb3AssetContext()
     const [positionIds, setPositionIds] = useState()
-    const [positions, setPositions] = useState()
+    const [dataSource, setDataSource] = useState([])
 
-    useEffect(() => {
+    const calcAccruedInterest = async (apy, value, createdDate) => {
+        const numberOfDays = await contract.calculateNumberDays(createdDate)
+        const accruedInterest = await contract.calculateInterest(apy, value, numberOfDays)
+        return Number(accruedInterest)
+    }
+
+    useMemo(() => {
         const onLoad = async () => {
-            const positionIds = await contract.connect(signer).getPositionIdsByWalletAddress()
-            setPositionIds(positionIds)
+            if (isConnected) {
+                const positionIdsHex = await contract.connect(signer).getPositionIdsByWalletAddress()
+                const positionIds = positionIdsHex.map(id => Number(id))
+                setPositionIds(positionIds)
 
-            positionIds.map(async positionId => {
-                const position = await contract.getPositionByPositionId(positionId)
-                setPositions(prev => ({
-                    ...prev,
-                    [positionId]: position
-                }))
-            })
+                const positions = await Promise.all(
+                    positionIds.map(id =>
+                        contract.connect(signer).getPositionById(
+                            Number(id)
+                        ))
+                )
+
+                positions.map(async position => {
+                    const token = tokens[position.tokenAddress]
+
+                    const ethAccruedInterestWei =
+                        await calcAccruedInterest(position.apy,
+                            position.ethPrice,
+                            position.createdDate)
+
+                    const ethAccruedInterest = toEther(ethAccruedInterestWei)
+
+                    const data = {
+                        ...position,
+                        asset: token.asset,
+                        symbol: token.symbol,
+                        ethAccruedInterest,
+                    }
+                    setDataSource(prev => [...prev, data])
+                })
+
+            }
 
         }
         onLoad()
 
-    },[])
+    }, [isConnected])
 
 
     const columns = [
@@ -47,15 +75,18 @@ const StakedAssets = props => {
         },
         {
             title: "Tokens Staked",
-            dataIndex: "tokenStaked",
-            key: "tokenStaked",
+            dataIndex: "tokenQuantity",
+            key: "tokenQuantity",
+            render: (text) => {
+                return toEther(text)
+            }
         },
         {
             title: "Market Value (USD)",
             dataIndex: "usdPrice",
             key: "usdPrice",
             render: (text) => {
-                return toEther(text)/100
+                return toEther(text) / 100
             }
         },
         {
@@ -65,27 +96,17 @@ const StakedAssets = props => {
         },
         {
             title: "Accrued Interest (ETH)",
-            dataIndex: "accruedInterest",
-            key: "accruedInterest"
+            dataIndex: "ethAccruedInterest",
+            key: "ethAccruedInterest"
         }
     ]
 
-    const mapDataSource = () => {
-        if (positionIds?.length > 0 && positions !== undefined) {
-            return positionIds?.map(positionId => {
-                const position =positions[positionId]
-                return {
-                        ...position
-                }
-            })
-        }
-    }
 
     return (
         <>
             <Table
                 columns={columns}
-                dataSource={mapDataSource()}
+                dataSource={dataSource}
             />
         </>
     );

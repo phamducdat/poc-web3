@@ -12,9 +12,8 @@ import {UseWeb3AssetContext} from "../../App";
 
 const EthereumMarket = props => {
 
-    const {contract, signer} = UseWeb3AssetContext()
-    const [tokenAddresses, setTokenAddresses] = useState([]);
-    const [tokens, setTokens] = useState({});
+    const {signer, tokens, tokenAddresses} = UseWeb3AssetContext()
+
     const [stakeModalOpen, setStakeModalOpen] = useState(false)
     const [tokenChosen, setTokenChosen] = useState(undefined)
 
@@ -81,27 +80,6 @@ const EthereumMarket = props => {
             }
         }
     ];
-
-    useEffect(() => {
-
-        const onLoad = async () => {
-
-            const tokenAddresses = await contract.getTokenAddresses()
-            setTokenAddresses(tokenAddresses)
-
-            tokenAddresses.map(async tokenAddress => {
-                const token = await contract.getTokenByTokenAddress(tokenAddress)
-                setTokens(prev => ({
-                    ...prev,
-                    [tokenAddress]: token
-                }))
-            })
-
-
-        }
-        onLoad()
-
-    }, [])
 
 
     const mapDataSource = () => {
