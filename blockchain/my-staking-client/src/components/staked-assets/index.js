@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {Table} from "antd";
+import React, {useMemo, useState} from 'react';
+import {Button, Table} from "antd";
 import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 
@@ -21,7 +21,6 @@ const StakedAssets = props => {
                 const positionIdsHex = await contract.connect(signer).getPositionIdsByWalletAddress()
                 const positionIds = positionIdsHex.map(id => Number(id))
                 setPositionIds(positionIds)
-
 
 
                 const positions = await Promise.all(
@@ -100,6 +99,22 @@ const StakedAssets = props => {
             title: "Accrued Interest (ETH)",
             dataIndex: "ethAccruedInterest",
             key: "ethAccruedInterest"
+        },
+        {
+            title: "",
+            dataIndex: "open",
+            key: "open",
+            render: (text, record) => {
+                return <>
+                    {text ? <Button type={"primary"}
+                                    onClick={() => {
+                                        contract.connect(signer).closePosition(record.positionId)
+                                    }}
+                        >Withdraw</Button>
+                        : <Button disabled={true}>Close</Button>}
+                </>
+
+            }
         }
     ]
 
