@@ -3,10 +3,11 @@ import {Button, Table} from "antd";
 import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 import './index.css'
-import {ethers} from "ethers";
 import moment from 'moment'
 
 const StakedAssets = props => {
+
+
 
     const {
         contract,
@@ -23,6 +24,7 @@ const StakedAssets = props => {
         const numberOfDays = await contract.calculateNumberDays(createdDate)
         const accruedInterest = await contract.calculateInterest(apy, value, numberOfDays)
         return Number(accruedInterest)
+
     }
 
     async function getData() {
@@ -62,14 +64,12 @@ const StakedAssets = props => {
 
     useMemo(() => {
         const onLoad = async () => {
-            if (isConnected) {
-                await getData();
-                setReloadStakeAssets(false)
-            }
+            await getData();
+            setReloadStakeAssets(false)
         }
         onLoad()
 
-    }, [isConnected])
+    }, [])
 
 
     const columns = [
@@ -129,8 +129,8 @@ const StakedAssets = props => {
                     {text ? <Button type={"primary"}
                                     onClick={async () => {
                                         const res = await contract.connect(signer).closePosition(record.positionId)
-                                        await res.wait()
-                                        setReloadStakeAssets(true)
+                                        // await res.wait()
+                                        // setReloadStakeAssets(true)
                                     }}
                         >Withdraw</Button>
                         : <Button disabled={true}>Close</Button>}

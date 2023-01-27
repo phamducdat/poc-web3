@@ -19,7 +19,7 @@ export const displayLogo = symbol => {
     }
 }
 
-export const toEther = wei => Number(ethers.utils.formatEther(String(wei))).toFixed(2);
+export const toEther = wei => Number(ethers.utils.formatEther(String(wei))).toFixed(10);
 
 export const LinkToAddressToken = (tokenAddress) => {
     return <Row gutter={12} justify={"space-between"}>

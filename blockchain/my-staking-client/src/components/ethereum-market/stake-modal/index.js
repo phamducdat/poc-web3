@@ -12,6 +12,7 @@ const StakeModal = props => {
 
     const tokenAddress = props?.data?.tokenAddress
 
+
     const onFinish = async (value) => {
         const stakeTokenQuantityWei =
             ethers.utils.parseEther(value?.tokenQuantity.toString())

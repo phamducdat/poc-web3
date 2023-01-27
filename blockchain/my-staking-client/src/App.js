@@ -11,12 +11,12 @@ import usdcArtifact from './artifacts/contracts/UsdCoin.sol/UsdCoin.json'
 import wbtcArtifact from './artifacts/contracts/WrappedBitcoin.sol/WrappedBitcoin.json'
 import wethArtifact from './artifacts/contracts/WrappedEther.sol/WrappedEther.json'
 
-const CONTRACT_ADDRESS = '0x7A28cf37763279F774916b85b5ef8b64AB421f79'
-const LINK_ADDRESS = '0x2BB8B93F585B43b06F3d523bf30C203d3B6d4BD4'
-const USDT_ADDRESS = '0xB7ca895F81F20e05A5eb11B05Cbaab3DAe5e23cd'
-const USDC_ADDRESS = '0xd0EC100F1252a53322051a95CF05c32f0C174354'
-const WBTC_ADDRESS = '0x2d13826359803522cCe7a4Cfa2c1b582303DD0B4'
-const WETH_ADDRESS = '0xCa57C1d3c2c35E667745448Fef8407dd25487ff8'
+const CONTRACT_ADDRESS = '0x09635F643e140090A9A8Dcd712eD6285858ceBef'
+const LINK_ADDRESS = '0xc5a5C42992dECbae36851359345FE25997F5C42d'
+const USDT_ADDRESS = '0x67d269191c92Caf3cD7723F116c85e6E9bf55933'
+const USDC_ADDRESS = '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E'
+const WBTC_ADDRESS = '0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690'
+const WETH_ADDRESS = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
 
 const Web3AssetContext = createContext()
 
@@ -38,6 +38,7 @@ const App = props => {
 
 
     useEffect(() => {
+
         const onLoad = async () => {
             const provider = await new ethers.providers.Web3Provider(window.ethereum)
             setProvider(provider)
@@ -90,6 +91,7 @@ const App = props => {
 
 
 
+
     return (
         <Layout style={{backgroundColor: "#f5f5f5"}}>
             <Web3AssetContext.Provider value={{
@@ -108,8 +110,8 @@ const App = props => {
                         <Card
                             title={"Ethereum Market"}
                             style={{width: "1500px"}}
-
-                            key={"ethereumMarket"}>
+                            key={"ethereumMarket"}
+                        >
                             <EthereumMarket/>
                         </Card>
                         <Card
