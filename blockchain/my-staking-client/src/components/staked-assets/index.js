@@ -6,18 +6,14 @@ import './index.css'
 import moment from 'moment'
 
 const StakedAssets = props => {
-
-
-
     const {
         contract,
         signer,
         tokens,
-        isConnected,
-        reloadStakeAssets,
         setReloadStakeAssets
     } = UseWeb3AssetContext()
     const [positionIds, setPositionIds] = useState()
+    const [totalCount, setTotalCount] = useState()
     const [dataSource, setDataSource] = useState([])
 
     const calcAccruedInterest = async (apy, value, createdDate) => {
@@ -41,6 +37,10 @@ const StakedAssets = props => {
                     Number(id)
                 ))
         )
+
+
+        setTotalCount(positions.length)
+
 
         positions.map(async position => {
             const token = tokens[position.tokenAddress]
@@ -129,8 +129,8 @@ const StakedAssets = props => {
                     {text ? <Button type={"primary"}
                                     onClick={async () => {
                                         const res = await contract.connect(signer).closePosition(record.positionId)
-                                        // await res.wait()
-                                        // setReloadStakeAssets(true)
+                                        await res.wait()
+                                        setReloadStakeAssets(true)
                                     }}
                         >Withdraw</Button>
                         : <Button disabled={true}>Close</Button>}
@@ -141,11 +141,18 @@ const StakedAssets = props => {
     ]
 
 
+    console.log("totalCount = ", totalCount)
+
+    const showTotal = (total) => `Total ${total} items`;
     return (
         <div>
             <Table
                 columns={columns}
                 dataSource={dataSource}
+                pagination={{
+                    total: totalCount,
+                    showTotal:showTotal
+                }}
             />
         </div>
     );
