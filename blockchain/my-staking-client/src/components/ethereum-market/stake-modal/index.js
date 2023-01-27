@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, InputNumber, message, Modal} from "antd";
+import {Form, InputNumber, Modal} from "antd";
 import {displayLogo} from "../../../utils";
 import {UseWeb3AssetContext} from "../../../App";
 import {ethers} from "ethers";
@@ -16,10 +16,14 @@ const StakeModal = props => {
     const onFinish = async (value) => {
         const stakeTokenQuantityWei =
             ethers.utils.parseEther(value?.tokenQuantity.toString())
+
         await tokenContracts[tokenAddress].connect(signer).approve(contract.address,
             stakeTokenQuantityWei)
+
+
         const res = await contract.connect(signer).stakeTokens(tokenAddress, stakeTokenQuantityWei);
         await res.wait()
+
         setReloadStakeAssets(true)
 
 
