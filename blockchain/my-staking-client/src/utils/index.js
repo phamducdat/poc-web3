@@ -1,5 +1,7 @@
 import {ethers} from "ethers";
 import {Link} from "react-router-dom";
+import {Button, Col, message, Row} from "antd";
+import {CopyOutlined} from "@ant-design/icons";
 
 export const displayLogo = symbol => {
 
@@ -20,9 +22,22 @@ export const displayLogo = symbol => {
 export const toEther = wei => Number(ethers.utils.formatEther(String(wei))).toFixed(2);
 
 export const LinkToAddressToken = (tokenAddress) => {
-    return   <Link to={`https://etherscan.io/token/${tokenAddress}`}
-    target={"_blank"}
-    >
-        {tokenAddress}
-    </Link>
+    return <Row gutter={12} justify={"space-between"}>
+        <Col>
+            <Link to={`https://etherscan.io/token/${tokenAddress}`}
+                  target={"_blank"}
+            >
+                {tokenAddress}
+            </Link>
+
+        </Col>
+        <Col>
+            <Button icon={<CopyOutlined/>}
+                    onClick={() => {
+                        navigator.clipboard.writeText(tokenAddress)
+                        message.success(`Copy ${tokenAddress}`)
+                    }}
+                    type={"text"}/>
+        </Col>
+    </Row>
 }

@@ -55,7 +55,7 @@ const App = props => {
             setIsConnected(true)
         else
             setIsConnected(false)
-    },[signer])
+    }, [signer])
 
     const getSigner = async () => {
         const signer = provider.getSigner();
@@ -81,16 +81,22 @@ const App = props => {
             }}>
                 {provider && contract && <Content style={{textAlign: 'center'}}>
                     <Space direction={"vertical"}>
-                        <Card title={"Ethereum Market"} key={"ethereumMarket"}>
+                        <Card
+                            title={"Ethereum Market"}
+                            style={{width: "1500px"}}
+
+                            key={"ethereumMarket"}>
                             <EthereumMarket/>
                         </Card>
-                        <Card title={"Staked Assets"}
-                              key={"stakedAssets"}
-                              extra={<>
-                                  {!isConnected && <Button type={"primary"} onClick={connectWallet}>
-                                      Connect Wallet
-                                  </Button>}
-                              </>}>
+                        <Card
+                            style={{width: "1500px"}}
+                            title={"Staked Assets"}
+                            key={"stakedAssets"}
+                            extra={<>
+                                {!isConnected && <Button type={"primary"} onClick={connectWallet}>
+                                    Connect Wallet
+                                </Button>}
+                            </>}>
                             {isConnected && <StakedAssets/>}
                         </Card>
                     </Space>
