@@ -40,12 +40,15 @@ async function main() {
     await staking.connect(owner).addToken('WrappedBitcoin', 'WBTC', wrappedBitcoin.address, 2382096, 500);
     await staking.connect(owner).addToken('WrappedEther', 'WETH', wrappedEther.address, 187848, 1000);
 
-    console.log("Staking:", staking.address);
-    console.log("Chainlink:", chainlink.address);
-    console.log("Tether:", tether.address);
-    console.log("UsdCoin:", usdCoin.address);
-    console.log("WrappedBitcoin:", wrappedBitcoin.address);
-    console.log("WrappedEther:", wrappedEther.address);
+
+
+
+    console.log("const CONTRACT_ADDRESS = " + "'" + staking.address + "'");
+    console.log("const LINK_ADDRESS = " + "'"+ chainlink.address + "'");
+    console.log("const USDT_ADDRESS = " + "'"+ tether.address + "'");
+    console.log("const USDC_ADDRESS = "+ "'"+ usdCoin.address+ "'");
+    console.log("const WBTC_ADDRESS = "+ "'"+ wrappedBitcoin.address+ "'");
+    console.log("const WETH_ADDRESS = "+ "'"+ wrappedEther.address+ "'");
 
     await chainlink.connect(owner).approve(staking.address, ethers.utils.parseEther('100'));
     await staking.connect(owner).stakeTokens(chainlink.address, ethers.utils.parseEther('100'))
@@ -56,16 +59,16 @@ async function main() {
     await usdCoin.connect(owner).approve(staking.address, ethers.utils.parseEther('10'));
     await staking.connect(owner).stakeTokens(usdCoin.address, ethers.utils.parseEther('10'))
 
-    await wrappedBitcoin.connect(owner).approve(staking.address, ethers.utils.parseEther('10'));
-    await staking.connect(owner).stakeTokens(wrappedBitcoin.address, ethers.utils.parseEther('10'))
+    await wrappedBitcoin.connect(owner).approve(staking.address, ethers.utils.parseEther('0.01'));
+    await staking.connect(owner).stakeTokens(wrappedBitcoin.address, ethers.utils.parseEther('0.01'))
 
-    await wrappedEther.connect(owner).approve(staking.address, ethers.utils.parseEther('10'));
-    await staking.connect(owner).stakeTokens(wrappedEther.address, ethers.utils.parseEther('10'))
+    await wrappedEther.connect(owner).approve(staking.address, ethers.utils.parseEther('0.01'));
+    await staking.connect(owner).stakeTokens(wrappedEther.address, ethers.utils.parseEther('0.01'))
 
     const provider = waffle.provider;
 
     const block = await provider.getBlock()
-    const newCreatedDate = block.timestamp - (86400 * 365)
+    const newCreatedDate = block.timestamp - (8640)
     await staking.connect(owner).modifyCreatedDate(1, newCreatedDate)
     await staking.connect(owner).modifyCreatedDate(2, newCreatedDate)
     await staking.connect(owner).modifyCreatedDate(3, newCreatedDate)

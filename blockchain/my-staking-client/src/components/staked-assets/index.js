@@ -4,6 +4,7 @@ import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 import './index.css'
 import moment from 'moment'
+import {ethers} from "ethers";
 
 const StakedAssets = props => {
     const {
@@ -31,6 +32,7 @@ const StakedAssets = props => {
         setPositionIds(positionIds)
 
 
+
         const positions = await Promise.all(
             positionIds.map(id =>
                 contract.connect(signer).getPositionById(
@@ -50,7 +52,9 @@ const StakedAssets = props => {
                     position.ethPrice,
                     position.createdDate)
 
-            const ethAccruedInterest = toEther(ethAccruedInterestWei)
+            const ethAccruedInterest =
+
+                Number(ethers.utils.formatEther(String(ethAccruedInterestWei))).toFixed(10)
 
             const data = {
                 ...position,
@@ -70,6 +74,7 @@ const StakedAssets = props => {
         onLoad()
 
     }, [])
+
 
 
     const columns = [
@@ -102,7 +107,7 @@ const StakedAssets = props => {
             dataIndex: "usdPrice",
             key: "usdPrice",
             render: (text) => {
-                return toEther(text) / 100
+                return toEther(text)
             }
         },
         {
@@ -117,7 +122,7 @@ const StakedAssets = props => {
             render: (text) => {
 
                 const timeInSeconds = parseInt(text._hex, 16)
-                return moment(timeInSeconds * 1000).format("DD/MM/YYYY HH:MM:SS")
+                return moment(timeInSeconds * 1000).format("DD/MM/YYYY hh:mm:ss")
             }
         },
         {
@@ -141,8 +146,6 @@ const StakedAssets = props => {
     ]
 
 
-    console.log("totalCount = ", totalCount)
-
     const showTotal = (total) => `Total ${total} items`;
     return (
         <div>
@@ -151,7 +154,7 @@ const StakedAssets = props => {
                 dataSource={dataSource}
                 pagination={{
                     total: totalCount,
-                    showTotal:showTotal
+                    showTotal: showTotal
                 }}
             />
         </div>
