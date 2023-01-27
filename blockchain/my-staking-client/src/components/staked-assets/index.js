@@ -32,7 +32,6 @@ const StakedAssets = props => {
         setPositionIds(positionIds)
 
 
-
         const positions = await Promise.all(
             positionIds.map(id =>
                 contract.connect(signer).getPositionById(
@@ -53,7 +52,6 @@ const StakedAssets = props => {
                     position.createdDate)
 
             const ethAccruedInterest =
-
                 Number(ethers.utils.formatEther(String(ethAccruedInterestWei))).toFixed(10)
 
             const data = {
@@ -66,6 +64,7 @@ const StakedAssets = props => {
         })
     }
 
+
     useMemo(() => {
         const onLoad = async () => {
             await getData();
@@ -74,7 +73,6 @@ const StakedAssets = props => {
         onLoad()
 
     }, [])
-
 
 
     const columns = [
@@ -120,7 +118,6 @@ const StakedAssets = props => {
             dataIndex: "createdDate",
             key: "createdDate",
             render: (text) => {
-
                 const timeInSeconds = parseInt(text._hex, 16)
                 return moment(timeInSeconds * 1000).format("DD/MM/YYYY hh:mm:ss")
             }
