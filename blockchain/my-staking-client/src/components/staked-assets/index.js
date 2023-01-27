@@ -22,6 +22,8 @@ const StakedAssets = props => {
                 const positionIds = positionIdsHex.map(id => Number(id))
                 setPositionIds(positionIds)
 
+
+
                 const positions = await Promise.all(
                     positionIds.map(id =>
                         contract.connect(signer).getPositionById(
