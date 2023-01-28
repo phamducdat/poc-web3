@@ -43,12 +43,12 @@ async function main() {
 
 
 
-    console.log("const CONTRACT_ADDRESS = " + "'" + staking.address + "'");
-    console.log("const LINK_ADDRESS = " + "'"+ chainlink.address + "'");
-    console.log("const USDT_ADDRESS = " + "'"+ tether.address + "'");
-    console.log("const USDC_ADDRESS = "+ "'"+ usdCoin.address+ "'");
-    console.log("const WBTC_ADDRESS = "+ "'"+ wrappedBitcoin.address+ "'");
-    console.log("const WETH_ADDRESS = "+ "'"+ wrappedEther.address+ "'");
+    console.log("REACT_APP_CONTRACT_ADDRESS="  + staking.address );
+    console.log("REACT_APP_LINK_ADDRESS=" + chainlink.address );
+    console.log("REACT_APP_USDT_ADDRESS=" + tether.address );
+    console.log("REACT_APP_USDC_ADDRESS="+ usdCoin.address);
+    console.log("REACT_APP_WBTC_ADDRESS="+ wrappedBitcoin.address);
+    console.log("REACT_APP_WETH_ADDRESS="+ wrappedEther.address);
 
     await chainlink.connect(owner).approve(staking.address, ethers.utils.parseEther('100'));
     await staking.connect(owner).stakeTokens(chainlink.address, ethers.utils.parseEther('100'))
