@@ -119,7 +119,7 @@ const StakedAssets = props => {
             key: "createdDate",
             render: (text) => {
                 const timeInSeconds = parseInt(text._hex, 16)
-                return moment(timeInSeconds * 1000).format("DD/MM/YYYY hh:mm:ss")
+                return moment(timeInSeconds * 1000).format("DD/MM/YYYY HH:mm:ss")
             }
         },
         {
