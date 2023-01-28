@@ -6,149 +6,146 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract Staking {
     address public owner;
 
-    uint public currentTokenId = 1;
+    address public tokenReward;
+
+    uint public ethTokenRewardPrice;
+
+
+    uint currentTokenId;
 
     struct Token {
         uint tokenId;
+        address tokenAddress;
         string name;
         string symbol;
-        address tokenAddress;
-        uint usdPrice;
         uint ethPrice;
-        uint apy;
+        uint maxStorage;
     }
 
-    struct Position {
+    mapping(address => uint) public currentTokenStorages;
+    address[] public tokenAddresses;
+    mapping(address => Token) public tokens;
+
+
+    uint public currentDepositId = 1;
+
+    struct Deposit {
         uint positionId;
         address walletAddress;
-        string name;
-        string symbol;
+        address tokenAddress;
         uint createdDate;
-        uint apy;
         uint tokenQuantity;
-        uint usdValue;
         uint ethValue;
+        uint period;
+        uint apd;
+        uint anticipatedInterest;
+        uint closingDate;
+        uint anticipatedClosingDate;
         bool open;
     }
 
-    uint public ethUsdPrice;
+    mapping(uint => Deposit) public deposits;
+    mapping(address => uint[]) public depositIdsByWalletAddress;
 
-    string[] public tokenSymbols;
-    mapping(string => Token) public tokens;
-
-    uint public currentPositionId = 1;
-
-    mapping(uint => Position) public positions;
+    mapping(uint => uint) defaultApds;
+    uint[] public lockPeriods;
 
 
-    mapping(address => uint[]) public positionIdsByAddress;
+    constructor(address tokenRewardAddress, uint ethTokenRewardPrice) {
+        tokenRewardAddress = tokenRewardAddress;
+        ethTokenRewardPrice = ethTokenRewardPrice;
 
-    mapping(string => uint) public stakedTokens;
+        defaultApds[30] = 700;
+        defaultApds[90] = 1000;
+        defaultApds[180] = 1200;
 
-    constructor(uint currentEthPrice) payable {
-        ethUsdPrice = currentEthPrice;
+        lockPeriods.push(30);
+        lockPeriods.push(90);
+        lockPeriods.push(180);
+
         owner = msg.sender;
     }
 
-    function addToken(string calldata name,
-        string calldata symbol,
+    function addToken(
         address tokenAddress,
-        uint usdPrice,
-        uint apy) external onlyOwner {
-        tokenSymbols.push(symbol);
-        tokens[symbol] = Token(
+        string calldata name,
+        string calldata symbol,
+        uint ethPrice,
+        uint currentStorage
+
+    ) external onlyOwner {
+        tokenAddresses.push(tokenAddress);
+        tokens[tokenAddress] = Token(
             currentTokenId,
+            tokenAddress,
             name,
             symbol,
-            tokenAddress,
-            usdPrice,
-            usdPrice / ethUsdPrice,
-            apy
+            ethPrice,
+            currentStorage
         );
+        currentTokenStorages[tokenAddress] = 0;
         currentTokenId += 1;
-
     }
 
-    function getTokenSymbols() public view returns (string[] memory) {
-        return tokenSymbols;
-    }
+    function stakeTokens(address tokenAddress,
+        uint tokenQuantity,
+        uint period) external validateTokenExist(tokenAddress) {
 
-    function getToken(string calldata tokenSymbol) public view returns (Token memory) {
-        return tokens[tokenSymbol];
-    }
-
-    function stakeTokens(string calldata symbol, uint tokenQuantity) external {
-        require(tokens[symbol].tokenId != 0, "This token cannot be staked");
-        IERC20(tokens[symbol].tokenAddress).transferFrom(msg.sender, address(this), tokenQuantity);
-
-        positions[currentPositionId] = Position(
-            currentPositionId,
+        IERC20(tokenAddress).transferFrom(
             msg.sender,
-            tokens[symbol].name,
-            symbol,
+            address(this),
+            tokenQuantity
+        );
+
+        uint apd = calculateApd(tokenAddress, period);
+        uint ethValue = tokenQuantity * tokens[tokenAddress].ethPrice;
+        uint anticipatedClosingDate = block.timestamp + (period * 1 days);
+
+        deposits[currentDepositId] = Deposit(
+            currentDepositId,
+            msg.sender,
+            tokenAddress,
             block.timestamp,
-            tokens[symbol].apy,
             tokenQuantity,
-            tokens[symbol].usdPrice * tokenQuantity,
-            (tokens[symbol].usdPrice * tokenQuantity) / ethUsdPrice,
+            ethValue,
+            period,
+            apd,
+            calculateInterest(apd, ethValue, block.timestamp, anticipatedClosingDate),
+            0,
+            anticipatedClosingDate,
             true
         );
-
-        positionIdsByAddress[msg.sender].push(currentPositionId);
-        currentPositionId += 1;
-        stakedTokens[symbol] += tokenQuantity;
+        depositIdsByWalletAddress[msg.sender].push(currentDepositId);
+        currentDepositId += 1;
     }
 
-    function getPositionIdsForAddress() external view returns (uint[] memory) {
-        return positionIdsByAddress[msg.sender];
-    }
 
-    function getPositionById(uint positionId) external view returns (Position memory) {
-        return positions[positionId];
-    }
-
-    function calculateInterest(uint apy, uint value, uint numberDays)
+    function calculateInterest(uint apd, uint ethValue, uint startDate, uint currentDate)
     public pure returns (uint) {
-        return apy * value * numberDays / 10000 / 356;
+        return apd * ethValue * (currentDate - startDate) / 10000;
+    }
+
+    function calculateApd(address tokenAddress,
+        uint period)
+    public view returns (uint)
+    {
+
+        return ((tokens[tokenAddress].maxStorage -
+        currentTokenStorages[tokenAddress]) * defaultApds[period]) / tokens[tokenAddress].maxStorage;
+
     }
 
 
-    function closePosition(uint positionId) external {
-        require(positions[positionId].walletAddress == msg.sender, "Not the owner of this position");
 
-        require(positions[positionId].open == true, "Position already closed");
 
-        positions[positionId].open = false;
-
-        IERC20(tokens[positions[positionId].symbol].tokenAddress).transfer(msg.sender,
-            positions[positionId].tokenQuantity);
-
-        uint numberDays = calculateNumberDays(positions[positionId].createdDate);
-
-        uint weiAmount = calculateInterest(
-            positions[positionId].apy,
-            positions[positionId].ethValue,
-            numberDays
-
-        );
-
-        payable(msg.sender).call{value:weiAmount}("");
-    }
-
-    function calculateNumberDays(uint createdDate) public view returns(uint) {
-        return (block.timestamp - createdDate) / 60 / 60 / 24;
-
-    }
-
-    function modifyCreatedDate(uint positionId, uint newCreatedDate) external onlyOwner {
-        positions[positionId].createdDate = newCreatedDate;
-        
+    modifier validateTokenExist(address tokenAddress) {
+        require(tokens[tokenAddress].tokenId != 0,
+            "This token cannot be deposited!");
+        _;
     }
 
     modifier onlyOwner() {
         require(owner == msg.sender, "Only Owner may call this function");
         _;
     }
-
-
 }
