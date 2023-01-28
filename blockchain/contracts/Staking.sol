@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract Staking {
     address public owner;
 
-    address public tokenReward;
+    address public tokenRewardAddress;
 
     uint public ethTokenRewardPrice;
 
@@ -51,9 +51,9 @@ contract Staking {
     uint[] public lockPeriods;
 
 
-    constructor(address tokenRewardAddress, uint ethTokenRewardPrice) {
-        tokenRewardAddress = tokenRewardAddress;
-        ethTokenRewardPrice = ethTokenRewardPrice;
+    constructor(address _tokenRewardAddress, uint _ethTokenRewardPrice) {
+        tokenRewardAddress = _tokenRewardAddress;
+        ethTokenRewardPrice = _ethTokenRewardPrice;
 
         defaultApds[30] = 700;
         defaultApds[90] = 1000;
@@ -119,23 +119,49 @@ contract Staking {
         currentDepositId += 1;
     }
 
+    function closeDeposit(uint depositId) external {
+        require(deposits[depositId].walletAddress == msg.sender, "Not the owner of this deposit");
+        require(deposits[depositId].open = true,
+            "Deposit is already closed");
 
-    function calculateInterest(uint apd, uint ethValue, uint startDate, uint currentDate)
-    public pure returns (uint) {
-        return apd * ethValue * (currentDate - startDate) / 10000;
+        deposits[depositId].open = false;
+        deposits[depositId].closingDate = block.timestamp;
+        currentTokenStorages[deposits[depositId].tokenAddress] -= deposits[depositId].tokenQuantity;
+
+        IERC20(deposits[depositId].tokenAddress)
+        .transfer(msg.sender, deposits[depositId].tokenQuantity);
+
+        uint calDate = block.timestamp;
+        if (block.timestamp > deposits[depositId].anticipatedClosingDate)
+            calDate = deposits[depositId].anticipatedClosingDate;
+
+        uint calTokenRewardInterest =
+        calculateInterest(deposits[depositId].apd,
+            deposits[depositId].ethValue,
+            deposits[depositId].createdDate,
+            calDate);
+
+        IERC20(tokenRewardAddress).transfer(msg.sender, calTokenRewardInterest);
+    }
+
+
+    function calculateInterest(uint apd, uint ethValue, uint startDate, uint endDate)
+    public view returns (uint) {
+        return apd * ethValue * (endDate - startDate) / (10000 * ethTokenRewardPrice);
     }
 
     function calculateApd(address tokenAddress,
         uint period)
     public view returns (uint)
+
     {
 
-        return ((tokens[tokenAddress].maxStorage -
-        currentTokenStorages[tokenAddress]) * defaultApds[period]) / tokens[tokenAddress].maxStorage;
-
+        if (tokens[tokenAddress].maxStorage < currentTokenStorages[tokenAddress])
+            return 0;
+        else
+            return ((tokens[tokenAddress].maxStorage -
+            currentTokenStorages[tokenAddress]) * defaultApds[period]) / tokens[tokenAddress].maxStorage;
     }
-
-
 
 
     modifier validateTokenExist(address tokenAddress) {
