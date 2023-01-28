@@ -113,7 +113,7 @@ const App = props => {
                 setReloadStakeAssets,
                 reloadStakeAssets
             }}>
-                {provider && contract && <Content style={{textAlign: 'center'}}>
+                {provider && contract && <Content style={{textAlign: 'center', margin:"16px"}}>
                     <Space direction={"vertical"}>
                         <Card
                             title={"Ethereum Market"}

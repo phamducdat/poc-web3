@@ -55,6 +55,7 @@ const EthereumMarket = props => {
             dataIndex: 'apy',
             key: 'apy',
             render: (text) => {
+                console.log("dat with text = ", text)
                 return <>
                     {(Number(text) / 100).toFixed(0)}%
                 </>
@@ -87,6 +88,7 @@ const EthereumMarket = props => {
             return tokenAddresses.map(address => {
 
                 const token = tokens[address]
+                console.log("dat with token = ", token)
                 return {
                     address: address,
                     ...token
