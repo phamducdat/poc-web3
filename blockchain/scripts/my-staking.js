@@ -19,7 +19,7 @@ async function main() {
     const staking = await Staking.deploy(
         187848,
         {
-            value: ethers.utils.parseEther('100')
+            value: ethers.utils.parseEther('0.1')
         }
     );
 
@@ -64,18 +64,6 @@ async function main() {
 
     await wrappedEther.connect(owner).approve(staking.address, ethers.utils.parseEther('0.01'));
     await staking.connect(owner).stakeTokens(wrappedEther.address, ethers.utils.parseEther('0.01'))
-
-
-
-    await chainlink.connect(owner).transfer(account1.address, ethers.utils.parseEther('100'));
-
-    await tether.connect(owner).transfer(account1.address, ethers.utils.parseEther('100'));
-
-    await usdCoin.connect(owner).transfer(account1.address, ethers.utils.parseEther('100'));
-
-    await wrappedBitcoin.connect(owner).transfer(account1.address, ethers.utils.parseEther('100'));
-
-    await wrappedEther.connect(owner).transfer(account1.address, ethers.utils.parseEther('100'));
 
     const provider = waffle.provider;
 
