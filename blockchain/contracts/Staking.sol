@@ -11,7 +11,7 @@ contract Staking {
     uint public ethTokenRewardPrice;
 
 
-    uint currentTokenId;
+    uint currentTokenId = 1;
 
     struct Token {
         uint tokenId;
