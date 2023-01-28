@@ -11,12 +11,12 @@ import usdcArtifact from './artifacts/contracts/UsdCoin.sol/UsdCoin.json'
 import wbtcArtifact from './artifacts/contracts/WrappedBitcoin.sol/WrappedBitcoin.json'
 import wethArtifact from './artifacts/contracts/WrappedEther.sol/WrappedEther.json'
 
-const CONTRACT_ADDRESS = '0x25Eb1185A01b23A9Ed28EC3f0EDaB245C3762F3B'
-const LINK_ADDRESS = '0x5cff31AE5491CBBc130e25F80C5887212116475a'
-const USDT_ADDRESS = '0x735AF20DBb77b6FD19fF1250F689D79606fcD7b5'
-const USDC_ADDRESS = '0x953A8D6889Bb7cba6A69643203505201C3A3f335'
-const WBTC_ADDRESS = '0x659C5D961e7Bdc228ecf39C2CD7Ff969CE07062d'
-const WETH_ADDRESS = '0xd4C4B7480CE27adbE7ED2Cb7057B03103935b65E'
+const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS
+const LINK_ADDRESS = process.env.REACT_APP_LINK_ADDRESS
+const USDT_ADDRESS = process.env.REACT_APP_USDT_ADDRESS
+const USDC_ADDRESS = process.env.REACT_APP_USDC_ADDRESS
+const WBTC_ADDRESS = process.env.REACT_APP_WBTC_ADDRESS
+const WETH_ADDRESS = process.env.REACT_APP_WETH_ADDRESS
 
 
 
@@ -32,7 +32,6 @@ export const UseWeb3AssetContext = () => {
     return useContext(Web3AssetContext)
 }
 const App = props => {
-
 
     const [provider, setProvider] = useState(undefined);
     const [contract, setContract] = useState(undefined);

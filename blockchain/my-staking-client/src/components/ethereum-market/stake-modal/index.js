@@ -17,14 +17,12 @@ const StakeModal = props => {
         const stakeTokenQuantityWei =
             ethers.utils.parseEther(value?.tokenQuantity.toString())
 
-        await tokenContracts[tokenAddress].connect(signer).approve(contract.address,
+        await tokenContracts[tokenAddress].connect(signer).approve(
+            contract.address,
             stakeTokenQuantityWei)
 
 
-        const res = await contract.connect(signer).stakeTokens(tokenAddress, stakeTokenQuantityWei);
-        await res.wait()
-
-        setReloadStakeAssets(true)
+        await contract.connect(signer).stakeTokens(tokenAddress, stakeTokenQuantityWei);
 
 
     }
