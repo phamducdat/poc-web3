@@ -4,12 +4,14 @@ import {Button, Card, Layout, Space} from "antd";
 import EthereumMarket from "./components/ethereum-market";
 import StakedAssets from "./components/staked-assets";
 import {ethers} from "ethers";
-import artifact from "./artifacts/contracts/MyStaking.sol/MyStaking.json";
+import artifact from "./artifacts/contracts/Staking.sol/Staking.json";
 import linkArtifact from './artifacts/contracts/Chainlink.sol/Chainlink.json'
 import usdtArtifact from './artifacts/contracts/Tether.sol/Tether.json'
 import usdcArtifact from './artifacts/contracts/UsdCoin.sol/UsdCoin.json'
 import wbtcArtifact from './artifacts/contracts/WrappedBitcoin.sol/WrappedBitcoin.json'
 import wethArtifact from './artifacts/contracts/WrappedEther.sol/WrappedEther.json'
+
+
 
 const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS
 const LINK_ADDRESS = process.env.REACT_APP_LINK_ADDRESS
@@ -20,7 +22,7 @@ const WETH_ADDRESS = process.env.REACT_APP_WETH_ADDRESS
 
 
 
-const Web3AssetContext = createContext()
+export const Web3AssetContext = createContext()
 
 export const UseWeb3AssetContext = () => {
     return useContext(Web3AssetContext)
