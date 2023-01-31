@@ -2,10 +2,6 @@ const {ethers} = require("hardhat");
 const hre = require("hardhat");
 const {moveTime} = require("../utils/move-time");
 
-const SECONDS_IN_30_DAY = 2592000
-const SECONDS_IN_90_DAY = 7776000
-const SECONDS_IN_180_DAY = 15552000
-
 async function getBalance(address) {
     const balanceBigInt = await hre.ethers.provider.getBalance(address);
     return hre.ethers.utils.formatEther(balanceBigInt);

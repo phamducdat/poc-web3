@@ -20,12 +20,6 @@ const WETH_ADDRESS = process.env.REACT_APP_WETH_ADDRESS
 
 
 
-
-
-
-
-
-
 const Web3AssetContext = createContext()
 
 export const UseWeb3AssetContext = () => {
@@ -96,7 +90,6 @@ const App = props => {
         const signer = await getSigner(provider)
         setSigner(signer)
     }
-
 
 
 

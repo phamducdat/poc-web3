@@ -22,48 +22,85 @@ contract Staking {
         uint maxStorage;
     }
 
-    mapping(address => uint) public currentTokenStorages;
     address[] public tokenAddresses;
     mapping(address => Token) public tokens;
 
+    struct Period {
+        uint periodId;
+        uint numberDays;
+        uint interestRate;
+        bool isUnlimited;
+    }
+
+    mapping(uint => Period) public periods;
+    uint[] periodIds;
 
     uint public currentDepositId = 1;
 
     struct Deposit {
-        uint positionId;
+        uint depositId;
         address walletAddress;
         address tokenAddress;
         uint createdDate;
         uint tokenQuantity;
         uint ethValue;
-        uint period;
-        uint apd;
-        uint anticipatedInterest;
+        uint numberDays;
+        uint interestRate;
+        bool isUnlimited;
         uint closingDate;
-        uint anticipatedClosingDate;
         bool open;
     }
 
     mapping(uint => Deposit) public deposits;
     mapping(address => uint[]) public depositIdsByWalletAddress;
 
-    mapping(uint => uint) defaultApds;
-    uint[] public lockPeriods;
-
 
     constructor(address _tokenRewardAddress, uint _ethTokenRewardPrice) {
         tokenRewardAddress = _tokenRewardAddress;
         ethTokenRewardPrice = _ethTokenRewardPrice;
 
-        defaultApds[30] = 700;
-        defaultApds[90] = 1000;
-        defaultApds[180] = 1200;
+        periods[1] = Period(
+            1,
+            30,
+            49,
+            false
+        );
 
-        lockPeriods.push(30);
-        lockPeriods.push(90);
-        lockPeriods.push(180);
+        periods[2] = Period(
+            2,
+            180,
+            60,
+            false
+        );
+
+        periods[3] = Period(
+            3,
+            365,
+            74,
+            false
+        );
+
+        periods[4] = Period(
+            4,
+            0,
+            30,
+            true
+        );
+
+        periodIds.push(1);
+        periodIds.push(2);
+        periodIds.push(3);
+        periodIds.push(4);
 
         owner = msg.sender;
+    }
+
+    function getPeriodIds() external view returns(uint[] memory) {
+        return periodIds;
+    }
+
+    function getPeriodById(uint periodId) external view returns(Period memory){
+        return periods[periodId];
     }
 
     function addToken(
@@ -83,13 +120,14 @@ contract Staking {
             ethPrice,
             currentStorage
         );
-        currentTokenStorages[tokenAddress] = 0;
         currentTokenId += 1;
     }
 
-    function stakeTokens(address tokenAddress,
+    function stakeTokens(
+        address tokenAddress,
         uint tokenQuantity,
-        uint period) external validateTokenExist(tokenAddress) {
+        uint periodId)
+    external validateTokenExist(tokenAddress) {
 
         IERC20(tokenAddress).transferFrom(
             msg.sender,
@@ -97,9 +135,7 @@ contract Staking {
             tokenQuantity
         );
 
-        uint apd = calculateApd(tokenAddress, period);
         uint ethValue = tokenQuantity * tokens[tokenAddress].ethPrice;
-        uint anticipatedClosingDate = block.timestamp + (period * 1 days);
 
         deposits[currentDepositId] = Deposit(
             currentDepositId,
@@ -108,40 +144,56 @@ contract Staking {
             block.timestamp,
             tokenQuantity,
             ethValue,
-            period,
-            apd,
-            calculateInterest(apd, ethValue, block.timestamp, anticipatedClosingDate),
+            periods[periodId].numberDays,
+            periods[periodId].interestRate,
+            periods[periodId].isUnlimited,
             0,
-            anticipatedClosingDate,
-            true
+            false
         );
         depositIdsByWalletAddress[msg.sender].push(currentDepositId);
         currentDepositId += 1;
     }
 
+    function calculateAnticipatedInterest(uint depositId) external view returns (uint) {
+        Deposit memory deposit = deposits[depositId];
+
+        return deposit.ethValue * deposit.interestRate / 1000;
+    }
+
     function closeDeposit(uint depositId) external {
         require(deposits[depositId].walletAddress == msg.sender, "Not the owner of this deposit");
-        require(deposits[depositId].open = true,
-            "Deposit is already closed");
+        require(deposits[depositId].open = true, "Deposit is already closed");
+
 
         deposits[depositId].open = false;
         deposits[depositId].closingDate = block.timestamp;
-        currentTokenStorages[deposits[depositId].tokenAddress] -= deposits[depositId].tokenQuantity;
+
+
 
         IERC20(deposits[depositId].tokenAddress)
         .transfer(msg.sender, deposits[depositId].tokenQuantity);
 
-        uint calDate = block.timestamp;
-        if (block.timestamp > deposits[depositId].anticipatedClosingDate)
-            calDate = deposits[depositId].anticipatedClosingDate;
+        uint ethInterest = calculateDepositInterest(depositId);
+        uint tokenRewardInterest = ethInterest/ethTokenRewardPrice;
 
-        uint calTokenRewardInterest =
-        calculateInterest(deposits[depositId].apd,
-            deposits[depositId].ethValue,
-            deposits[depositId].createdDate,
-            calDate);
+        IERC20(tokenRewardAddress).transfer(deposits[depositId].walletAddress, tokenRewardInterest);
 
-        IERC20(tokenRewardAddress).transfer(msg.sender, calTokenRewardInterest);
+    }
+
+    function calculateDepositInterest(uint depositId) public view returns (uint)  {
+        Deposit memory deposit = deposits[depositId];
+
+        if (deposits[depositId].isUnlimited == true) {
+            uint calDate = block.timestamp - deposit.createdDate;
+            return deposit.ethValue * calDate * deposit.interestRate / 1000 * 365;
+        } else {
+            uint calDate = block.timestamp - deposit.createdDate;
+            if (calDate > deposit.numberDays) {
+                calDate = deposit.numberDays;
+            }
+            return deposit.ethValue * calDate * deposit.interestRate / 1000 * deposit.numberDays;
+        }
+
     }
 
 
@@ -150,18 +202,6 @@ contract Staking {
         return apd * ethValue * (endDate - startDate) / (10000 * ethTokenRewardPrice);
     }
 
-    function calculateApd(address tokenAddress,
-        uint period)
-    public view returns (uint)
-
-    {
-
-        if (tokens[tokenAddress].maxStorage < currentTokenStorages[tokenAddress])
-            return 0;
-        else
-            return ((tokens[tokenAddress].maxStorage -
-            currentTokenStorages[tokenAddress]) * defaultApds[period]) / tokens[tokenAddress].maxStorage;
-    }
 
 
     modifier validateTokenExist(address tokenAddress) {
@@ -169,6 +209,12 @@ contract Staking {
             "This token cannot be deposited!");
         _;
     }
+
+    function modifyCreatedDate(uint depositId, uint newCreatedDate) external onlyOwner {
+        deposits[depositId].createdDate = newCreatedDate;
+
+    }
+
 
     modifier onlyOwner() {
         require(owner == msg.sender, "Only Owner may call this function");
