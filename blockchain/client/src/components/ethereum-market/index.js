@@ -43,25 +43,6 @@ const EthereumMarket = props => {
             key: 'symbol',
         },
         {
-            title: 'Price (USD)',
-            dataIndex: 'usdPrice',
-            key: 'usdPrice',
-            render: (text) => {
-                return (Number(text) / 100).toFixed(0)
-            }
-        },
-        {
-            title: 'APY',
-            dataIndex: 'apy',
-            key: 'apy',
-            render: (text) => {
-                console.log("dat with text = ", text)
-                return <>
-                    {(Number(text) / 100).toFixed(0)}%
-                </>
-            }
-        },
-        {
             title: "",
             dataIndex: "stake",
             key: "stake",

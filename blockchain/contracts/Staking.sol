@@ -95,6 +95,15 @@ contract Staking {
         owner = msg.sender;
     }
 
+    function getTokenAddresses() public view returns (address[] memory) {
+        return tokenAddresses;
+
+    }
+
+    function getTokenByTokenAddress(address tokenAddress) public view returns (Token memory) {
+        return tokens[tokenAddress];
+    }
+
     function getPeriodIds() external view returns(uint[] memory) {
         return periodIds;
     }
