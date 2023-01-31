@@ -49,21 +49,11 @@ const StakedAssets = props => {
 
             const calculateDepositInterest = await contract.connect(signer).calculateDepositInterest(deposit.depositId)
 
-            console.log("dat with calculateDepositInterest = ", calculateDepositInterest)
-
-            // const ethAccruedInterestWei =
-            //     await calcAccruedInterest(deposit.apy,
-            //         deposit.ethPrice,
-            //         deposit.createdDate)
-            //
-            // const ethAccruedInterest =
-            //     Number(ethers.utils.formatEther(String(ethAccruedInterestWei))).toFixed(10)
-
             const data = {
                 ...deposit,
                 asset: token.asset,
                 symbol: token.symbol,
-                ethAccruedInterest:Number(ethers.utils.formatEther(String(calculateDepositInterest))).toFixed(10)
+                ethAccruedInterest:Number(ethers.utils.formatEther(String(calculateDepositInterest))).toFixed(4)
             }
             setDataSource(prev => [...prev, data])
         })

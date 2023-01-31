@@ -202,7 +202,7 @@ contract Staking {
 
         if (deposits[depositId].isUnlimited == true) {
             uint calDate = (block.timestamp - deposit.createdDate)/ (1 days);
-            return deposit.ethValue * calDate * deposit.interestRate / 1000 * 365;
+            return deposit.ethValue * calDate * deposit.interestRate / (1000 * 365);
         } else {
             uint calDate = (block.timestamp - deposit.createdDate) / (1 days);
             if (calDate > deposit.numberDays) {
