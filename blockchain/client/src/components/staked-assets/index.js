@@ -13,7 +13,7 @@ const StakedAssets = props => {
         tokens,
         setReloadStakeAssets
     } = UseWeb3AssetContext()
-    const [positionIds, setPositionIds] = useState()
+    const [depositIds, setDepositIds] = useState()
     const [totalCount, setTotalCount] = useState()
     const [dataSource, setDataSource] = useState([])
 
@@ -26,39 +26,44 @@ const StakedAssets = props => {
 
     async function getData() {
         await setDataSource([])
-        await setPositionIds(undefined)
-        const positionIdsHex = await contract.connect(signer).getPositionIdsByWalletAddress()
-        const positionIds = positionIdsHex.map(id => Number(id))
-        setPositionIds(positionIds)
+        await setDepositIds(undefined)
+        const depositIdsHex = await contract.connect(signer).getDepositIdsByWalletAddress()
+        const depositIds = depositIdsHex.map(id => Number(id))
+        setDepositIds(depositIds)
 
 
-        const positions = await Promise.all(
-            positionIds.map(id =>
-                contract.connect(signer).getPositionById(
+        const deposits = await Promise.all(
+            depositIds.map(id =>
+                contract.connect(signer).getDepositByDepositId(
                     Number(id)
                 ))
         )
 
 
-        setTotalCount(positions.length)
+        setTotalCount(deposits.length)
 
 
-        positions.map(async position => {
-            const token = tokens[position.tokenAddress]
+        deposits.map(async deposit => {
+            const token = tokens[deposit.tokenAddress]
 
-            const ethAccruedInterestWei =
-                await calcAccruedInterest(position.apy,
-                    position.ethPrice,
-                    position.createdDate)
 
-            const ethAccruedInterest =
-                Number(ethers.utils.formatEther(String(ethAccruedInterestWei))).toFixed(10)
+            const calculateDepositInterest = await contract.connect(signer).calculateDepositInterest(deposit.depositId)
+
+            console.log("dat with calculateDepositInterest = ", calculateDepositInterest)
+
+            // const ethAccruedInterestWei =
+            //     await calcAccruedInterest(deposit.apy,
+            //         deposit.ethPrice,
+            //         deposit.createdDate)
+            //
+            // const ethAccruedInterest =
+            //     Number(ethers.utils.formatEther(String(ethAccruedInterestWei))).toFixed(10)
 
             const data = {
-                ...position,
+                ...deposit,
                 asset: token.asset,
                 symbol: token.symbol,
-                ethAccruedInterest,
+                ethAccruedInterest:Number(ethers.utils.formatEther(String(calculateDepositInterest))).toFixed(10)
             }
             setDataSource(prev => [...prev, data])
         })
@@ -101,14 +106,6 @@ const StakedAssets = props => {
             }
         },
         {
-            title: "Market Value (USD)",
-            dataIndex: "usdPrice",
-            key: "usdPrice",
-            render: (text) => {
-                return toEther(text)
-            }
-        },
-        {
             title: "Accrued Interest (ETH)",
             dataIndex: "ethAccruedInterest",
             key: "ethAccruedInterest"
@@ -130,7 +127,7 @@ const StakedAssets = props => {
                 return <>
                     {text ? <Button type={"primary"}
                                     onClick={async () => {
-                                        const res = await contract.connect(signer).closePosition(record.positionId)
+                                        const res = await contract.connect(signer).closeDeposit(record.depositId)
                                         await res.wait()
                                         setReloadStakeAssets(true)
                                     }}

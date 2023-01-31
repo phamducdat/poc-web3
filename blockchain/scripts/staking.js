@@ -4,7 +4,7 @@ const {moveTime} = require("../utils/move-time");
 
 
 async function main() {
-    const [owner, account1] = await ethers.getSigners();
+    const [owner] = await ethers.getSigners();
 
     const Staking = await ethers.getContractFactory('Staking', owner);
 
@@ -17,7 +17,8 @@ async function main() {
         1
     );
 
-    await tokenReward.connect(owner).approve(staking.address,ethers.utils.parseEther('1'))
+    await tokenReward.connect(owner).approve(staking.address,ethers.utils.parseEther('1000000'))
+    await tokenReward.connect(owner).transfer(staking.address,ethers.utils.parseEther('1000000'))
 
     const Chainlink = await ethers.getContractFactory('Chainlink', owner);
     const chainlink = await Chainlink.deploy();
@@ -45,6 +46,7 @@ async function main() {
     console.log("REACT_APP_USDC_ADDRESS="+ usdCoin.address);
     console.log("REACT_APP_WBTC_ADDRESS="+ wrappedBitcoin.address);
     console.log("REACT_APP_WETH_ADDRESS="+ wrappedEther.address);
+    console.log("REACT_APP_TOKEN_REWARD="+ tokenReward.address);
 
     await chainlink.connect(owner).approve(staking.address, ethers.utils.parseEther('100'));
     await staking.connect(owner).stakeTokens(chainlink.address, ethers.utils.parseEther('100'),1)
@@ -59,12 +61,12 @@ async function main() {
     await staking.connect(owner).stakeTokens(wrappedBitcoin.address, ethers.utils.parseEther('0.01'),4)
 
     await wrappedEther.connect(owner).approve(staking.address, ethers.utils.parseEther('0.01'));
-    await staking.connect(owner).stakeTokens(wrappedEther.address, ethers.utils.parseEther('0.01'),5)
+    await staking.connect(owner).stakeTokens(wrappedEther.address, ethers.utils.parseEther('0.01'),4)
 
     const provider = waffle.provider;
 
     const block = await provider.getBlock()
-    const newCreatedDate = block.timestamp - (8640)
+    const newCreatedDate = block.timestamp - (31536000)
     await staking.connect(owner).modifyCreatedDate(1, newCreatedDate)
     await staking.connect(owner).modifyCreatedDate(2, newCreatedDate)
     await staking.connect(owner).modifyCreatedDate(3, newCreatedDate)

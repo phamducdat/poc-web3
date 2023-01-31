@@ -95,6 +95,14 @@ contract Staking {
         owner = msg.sender;
     }
 
+    function getDepositIdsByWalletAddress() public view returns (uint256[] memory) {
+        return depositIdsByWalletAddress[msg.sender];
+    }
+
+    function getDepositByDepositId(uint depositId) public view returns (Deposit memory) {
+        return deposits[depositId];
+    }
+
     function getTokenAddresses() public view returns (address[] memory) {
         return tokenAddresses;
 
@@ -157,7 +165,7 @@ contract Staking {
             periods[periodId].interestRate,
             periods[periodId].isUnlimited,
             0,
-            false
+            true
         );
         depositIdsByWalletAddress[msg.sender].push(currentDepositId);
         currentDepositId += 1;
@@ -193,14 +201,14 @@ contract Staking {
         Deposit memory deposit = deposits[depositId];
 
         if (deposits[depositId].isUnlimited == true) {
-            uint calDate = block.timestamp - deposit.createdDate;
+            uint calDate = (block.timestamp - deposit.createdDate)/ (1 days);
             return deposit.ethValue * calDate * deposit.interestRate / 1000 * 365;
         } else {
-            uint calDate = block.timestamp - deposit.createdDate;
+            uint calDate = (block.timestamp - deposit.createdDate) / (1 days);
             if (calDate > deposit.numberDays) {
                 calDate = deposit.numberDays;
             }
-            return deposit.ethValue * calDate * deposit.interestRate / 1000 * deposit.numberDays;
+            return (deposit.ethValue * calDate * deposit.interestRate) / (1000 * deposit.numberDays);
         }
 
     }

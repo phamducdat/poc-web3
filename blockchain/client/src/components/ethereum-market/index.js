@@ -69,7 +69,6 @@ const EthereumMarket = props => {
             return tokenAddresses.map(address => {
 
                 const token = tokens[address]
-                console.log("dat with token = ", token)
                 return {
                     address: address,
                     ...token
