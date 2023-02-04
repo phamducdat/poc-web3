@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {UseWeb3AssetContext} from "../../../App";
-import {Button, Descriptions, Form, InputNumber, Row, Space} from "antd";
+import {Button, Descriptions, Divider, Form, InputNumber, Row, Space, Tag} from "antd";
+import moment from "moment";
 
 const StakeCard = props => {
     const {
@@ -11,7 +12,20 @@ const StakeCard = props => {
     const [periodIds, setPeriodIds] = useState()
     const [quantity, setQuantity] = useState(0)
     const [periodIdClicked, setPeriodIdClicked] = useState(undefined)
+    const [details, setDetails] = useState(null)
 
+
+    function clearDetails() {
+        setDetails({
+            ethPrice: Number(data?.ethPrice)
+        })
+        setQuantity(0)
+        setPeriodIdClicked(null)
+    }
+
+    useEffect(() => {
+        clearDetails();
+    }, [data])
 
     useEffect(() => {
         const onLoad = async () => {
@@ -31,9 +45,45 @@ const StakeCard = props => {
     }, [])
 
 
+    useEffect(() => {
+        if (quantity) {
+            setDetails({
+                ...details,
+                quantity: quantity
+            })
+        }
+        if (periodIdClicked) {
+            const period = periods[periodIdClicked]
+            const anticipatedInterest =
+                (quantity * Number(data?.ethPrice) * period?.interestRate) / 100
+
+            setDetails({
+                quantity: quantity,
+                ethPrice: Number(data?.ethPrice),
+                period:
+                    <Tag color={"orange"}>
+                        {displayPeriod(periodIdClicked)}
+                    </Tag>,
+                exceptedClosingDay:
+                    <Tag color={"green"}>
+
+                        {moment().add(Number(period?.numberDays), 'days').format("DD/MM/YYYY HH:mm:ss")}
+                    </Tag>,
+                anticipatedInterest:
+                    <Tag color={"gold"}>
+
+                        {anticipatedInterest}
+                    </Tag>,
+                unlimited: period?.isUnlimited === true ? <Tag color={"red"}>Yes</Tag> : <Tag color={"blue"}>No</Tag>,
+            })
+        }
+
+    }, [quantity, periodIdClicked])
+
+
     const displayPeriod = (periodId) => {
         const period = periods[periodId]
-        if (!period) return  null
+        if (!period) return null
         if (Number(period?.numberDays) === 0)
             return "Unlimited - " + Number(period?.interestRate) / 100 + "% / year";
         else {
@@ -73,7 +123,10 @@ const StakeCard = props => {
             <Form.Item
                 label={"Quantity"}
             >
-                <InputNumber value={quantity} style={{width: "100%"}}/>
+                <InputNumber
+                    onChange={(value) => setQuantity(value)}
+                    value={quantity}
+                    style={{width: "100%"}}/>
             </Form.Item>
             <Space
                 align={"start"}
@@ -84,15 +137,23 @@ const StakeCard = props => {
                 }
             </Space>
 
-            <Descriptions title={"Details"} column={1}>
+            <Divider/>
+            <Descriptions size={"middle"} title={"Details"} column={1}>
 
-                <Descriptions.Item label={"Quantity"}>22</Descriptions.Item>
-                <Descriptions.Item label={"Ether Price"}>22</Descriptions.Item>
+                <Descriptions.Item label={"Quantity"}>{details?.quantity}</Descriptions.Item>
+                <Descriptions.Item label={"Ether Price"}>{details?.ethPrice}</Descriptions.Item>
                 <Descriptions.Item
-                    label={"Period"}>{displayPeriod(periodIdClicked)}</Descriptions.Item>
-                <Descriptions.Item label={"Excepted Closing Days"}>22</Descriptions.Item>
-                <Descriptions.Item label={"Anticipated Interest"}>22</Descriptions.Item>
-                <Descriptions.Item label={"Unlimited"}>No</Descriptions.Item>
+                    label={"Period"}>
+
+                        {details?.period}
+                </Descriptions.Item>
+                <Descriptions.Item label={"Excepted Closing Day"}>
+                        {details?.exceptedClosingDay}
+                </Descriptions.Item>
+                <Descriptions.Item label={"Anticipated Interest"}>
+                        {details?.anticipatedInterest}
+                </Descriptions.Item>
+                <Descriptions.Item label={"Unlimited"}>{details?.unlimited}</Descriptions.Item>
 
             </Descriptions>
 
@@ -100,7 +161,7 @@ const StakeCard = props => {
                 <Button type={"primary"}>
                     Stake
                 </Button>
-                <Button>
+                <Button onClick={() => clearDetails()}>
                     Cancel
 
                 </Button>
