@@ -87,7 +87,7 @@ const EthereumMarket = props => {
         <>
 
             <Row gutter={16}>
-                <Col span={16}>
+                <Col span={14}>
                     <Card>
                         {tokenAddresses?.length > 0 &&
                             <Table
@@ -107,7 +107,7 @@ const EthereumMarket = props => {
                     </Card>
                 </Col>
 
-                <Col span={8}>
+                <Col span={10}>
 
 
                     <Card title={<>
@@ -118,8 +118,8 @@ const EthereumMarket = props => {
                             {tokenClickedData?.symbol}
                         </Row>
                     </>}>
-                  
-                            <StakeCard data={tokenClickedData}/>
+
+                        {tokenClickedData && <StakeCard data={tokenClickedData}/>}
                     </Card>
                 </Col>
 
