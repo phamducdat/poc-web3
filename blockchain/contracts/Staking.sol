@@ -132,7 +132,7 @@ contract Staking {
             tokenAddress,
             name,
             symbol,
-            ethPrice,
+            ethPrice
         );
         currentTokenId += 1;
     }

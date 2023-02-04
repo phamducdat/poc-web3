@@ -46,25 +46,6 @@ const EthereumMarket = props => {
             title: 'Symbol',
             dataIndex: 'symbol',
             key: 'symbol',
-        },
-        {
-            title: "",
-            dataIndex: "stake",
-            key: "stake",
-            render: (text, record) => {
-                return <>
-                    {signer !== undefined &&
-                        <Button
-                            style={{backgroundColor: "#87d068"}}
-                            onClick={() => {
-                                setStakeModalOpen(true)
-                                setTokenChosen(record)
-                            }}>
-                            Stake
-                        </Button>}
-
-                </>
-            }
         }
     ];
 
@@ -88,7 +69,7 @@ const EthereumMarket = props => {
 
             <Row gutter={16}>
                 <Col span={14}>
-                    <Card>
+                    <Card title={"Tokens"}>
                         {tokenAddresses?.length > 0 &&
                             <Table
                                 columns={columns}
@@ -119,7 +100,7 @@ const EthereumMarket = props => {
                         </Row>
                     </>}>
 
-                        {tokenClickedData && <StakeCard data={tokenClickedData}/>}
+                        {isConnected && tokenClickedData && <StakeCard data={tokenClickedData}/>}
                     </Card>
                 </Col>
 

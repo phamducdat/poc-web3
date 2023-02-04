@@ -2,10 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {UseWeb3AssetContext} from "../../../App";
 import {Button, Descriptions, Divider, Form, InputNumber, Row, Space, Tag} from "antd";
 import moment from "moment";
+import {ethers} from "ethers";
 
 const StakeCard = props => {
     const {
         contract,
+        signer ,
+        tokenContracts
     } = UseWeb3AssetContext()
     const data = props?.data
     const [periods, setPeriods] = useState({})
@@ -14,6 +17,17 @@ const StakeCard = props => {
     const [periodIdClicked, setPeriodIdClicked] = useState(undefined)
     const [details, setDetails] = useState(null)
 
+
+    const onStake = async () => {
+        console.log("dat in async")
+        const stakeTokenQuantityWei =
+            ethers.utils.parseEther(quantity.toString())
+
+        await tokenContracts[data?.tokenAddress].connect(signer).approve(contract.address,
+            stakeTokenQuantityWei)
+        await contract.connect(signer).stakeTokens(data?.tokenAddress,
+            quantity, periodIdClicked)
+    }
 
     function clearDetails() {
         setDetails({
@@ -67,7 +81,7 @@ const StakeCard = props => {
                 exceptedClosingDay:
                     <Tag color={"green"}>
 
-                        {moment().add(Number(period?.numberDays), 'days').format("DD/MM/YYYY HH:mm:ss")}
+                        {period?.isUnlimited ? "Unlimited" : moment().add(Number(period?.numberDays), 'days').format("DD/MM/YYYY HH:mm:ss")}
                     </Tag>,
                 anticipatedInterest:
                     <Tag color={"gold"}>
@@ -145,25 +159,28 @@ const StakeCard = props => {
                 <Descriptions.Item
                     label={"Period"}>
 
-                        {details?.period}
+                    {details?.period}
                 </Descriptions.Item>
                 <Descriptions.Item label={"Excepted Closing Day"}>
-                        {details?.exceptedClosingDay}
+                    {details?.exceptedClosingDay}
                 </Descriptions.Item>
                 <Descriptions.Item label={"Anticipated Interest"}>
-                        {details?.anticipatedInterest}
+                    {details?.anticipatedInterest}
                 </Descriptions.Item>
                 <Descriptions.Item label={"Unlimited"}>{details?.unlimited}</Descriptions.Item>
 
             </Descriptions>
 
             <Row justify={"space-between"}>
-                <Button type={"primary"}>
+                <Button
+                    type={"primary"}
+                    onClick={onStake}
+                    disabled={!quantity || !periodIdClicked}
+                >
                     Stake
                 </Button>
                 <Button onClick={() => clearDetails()}>
                     Cancel
-
                 </Button>
             </Row>
         </div>

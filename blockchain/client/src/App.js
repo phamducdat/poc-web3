@@ -10,6 +10,7 @@ import usdcArtifact from './artifacts/contracts/UsdCoin.sol/UsdCoin.json'
 import wbtcArtifact from './artifacts/contracts/WrappedBitcoin.sol/WrappedBitcoin.json'
 import wethArtifact from './artifacts/contracts/WrappedEther.sol/WrappedEther.json'
 import StakedAssets from "./components/staked-assets";
+import {BarChartOutlined, PoundOutlined} from "@ant-design/icons";
 
 
 const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS
@@ -97,14 +98,22 @@ const App = props => {
     const items = [
         {
             key: 'market',
-            label: 'Market',
+            label:
+                <>
+                    <BarChartOutlined/>
+                    Market
+                </>,
             children: <EthereumMarket/>
 
         },
         {
             key: 'stakeAssets',
-            label: 'Stake Assets',
-            children: isConnected && <StakedAssets/>
+            label: <>
+                <PoundOutlined />
+                Stake Assets
+                </>,
+            children: isConnected && <StakedAssets/>,
+            disabled: !isConnected
         }
     ]
 
