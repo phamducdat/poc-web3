@@ -1,8 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {Content} from "antd/es/layout/layout";
-import {Button, Card, Layout, Space} from "antd";
+import {Button, Layout, Tabs} from "antd";
 import EthereumMarket from "./components/ethereum-market";
-import StakedAssets from "./components/staked-assets";
 import {ethers} from "ethers";
 import artifact from "./artifacts/contracts/Staking.sol/Staking.json";
 import linkArtifact from './artifacts/contracts/Chainlink.sol/Chainlink.json'
@@ -10,7 +9,7 @@ import usdtArtifact from './artifacts/contracts/Tether.sol/Tether.json'
 import usdcArtifact from './artifacts/contracts/UsdCoin.sol/UsdCoin.json'
 import wbtcArtifact from './artifacts/contracts/WrappedBitcoin.sol/WrappedBitcoin.json'
 import wethArtifact from './artifacts/contracts/WrappedEther.sol/WrappedEther.json'
-
+import StakedAssets from "./components/staked-assets";
 
 
 const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS
@@ -19,7 +18,6 @@ const USDT_ADDRESS = process.env.REACT_APP_USDT_ADDRESS
 const USDC_ADDRESS = process.env.REACT_APP_USDC_ADDRESS
 const WBTC_ADDRESS = process.env.REACT_APP_WBTC_ADDRESS
 const WETH_ADDRESS = process.env.REACT_APP_WETH_ADDRESS
-
 
 
 export const Web3AssetContext = createContext()
@@ -38,7 +36,6 @@ const App = props => {
     const [tokens, setTokens] = useState({});
 
     const [reloadStakeAssets, setReloadStakeAssets] = useState(false)
-
 
 
     useEffect(() => {
@@ -94,9 +91,23 @@ const App = props => {
     }
 
 
+    const items = [
+        {
+            key: 'market',
+            label: 'Market',
+            children: <EthereumMarket/>
+
+        },
+        {
+            key: 'stakeAssets',
+            label: 'Stake Assets',
+            children: isConnected && <StakedAssets/>
+        }
+    ]
+
 
     return (
-        <Layout style={{backgroundColor: "#f5f5f5"}}>
+        <Layout style={{backgroundColor: "white"}}>
             <Web3AssetContext.Provider value={{
                 provider,
                 contract,
@@ -108,28 +119,43 @@ const App = props => {
                 setReloadStakeAssets,
                 reloadStakeAssets
             }}>
-                {provider && contract && <Content style={{textAlign: 'center', margin:"16px"}}>
-                    <Space direction={"vertical"}>
-                        <Card
-                            title={"Ethereum Market"}
-                            style={{width: "1500px"}}
-                            key={"ethereumMarket"}
-                        >
-                            <EthereumMarket/>
-                        </Card>
-                        <Card
-                            style={{width: "1500px"}}
-                            title={"Staked Assets"}
-                            key={reloadStakeAssets}
-                            extra={<>
-                                {!isConnected && <Button type={"primary"} onClick={connectWallet}>
-                                    Connect Wallet
-                                </Button>}
-                            </>}>
-                            {isConnected && <StakedAssets/>}
-                        </Card>
-                    </Space>
-                </Content>}
+                {provider && contract && <Content style={{textAlign: 'center', margin: "16px"}}>
+                    {/*<Space direction={"vertical"}>*/}
+                    {/*    <Card*/}
+                    {/*        title={"Ethereum Market"}*/}
+                    {/*        style={{width: "1500px"}}*/}
+                    {/*        key={"ethereumMarket"}*/}
+                    {/*    >*/}
+                    {/*        <EthereumMarket/>*/}
+                    {/*    </Card>*/}
+                    {/*    <Card*/}
+                    {/*        style={{width: "1500px"}}*/}
+                    {/*        title={"Staked Assets"}*/}
+                    {/*        key={reloadStakeAssets}*/}
+                    {/*        extra={<>*/}
+                    {/*            {!isConnected && <Button type={"primary"} onClick={connectWallet}>*/}
+                    {/*                Connect Wallet*/}
+                    {/*            </Button>}*/}
+                    {/*        </>}>*/}
+                    {/*        {isConnected && <StakedAssets/>}*/}
+                    {/*    </Card>*/}
+                    {/*</Space>*/}
+                    <Tabs
+                        type="card"
+                        defaultActiveKey="market" items={items}
+                        centered={"true"}
+                        tabBarExtraContent={{
+                            right:
+                                <>
+                                    {!isConnected && <Button type={"primary"} onClick={connectWallet}>
+                                        Connect Wallet
+                                    </Button>}
+                                </>
+                        }
+                        }
+                    />
+                </Content>
+                }
             </Web3AssetContext.Provider>
         </Layout>
     )
