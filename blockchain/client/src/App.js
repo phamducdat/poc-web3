@@ -30,6 +30,7 @@ const App = props => {
     const [provider, setProvider] = useState(undefined);
     const [contract, setContract] = useState(undefined);
     const [signer, setSigner] = useState(undefined);
+    const [signerAddress, setSignerAddress] = useState(undefined);
     const [isConnected, setIsConnected] = useState(false);
     const [tokenAddresses, setTokenAddresses] = useState([]);
     const [tokenContracts, setTokenContracts] = useState({})
@@ -81,6 +82,8 @@ const App = props => {
 
     const getSigner = async () => {
         const signer = provider.getSigner();
+        const signerAddress = await signer.getAddress();
+        setSignerAddress(signerAddress)
         setSigner(signer)
         return signer
     }
@@ -143,13 +146,20 @@ const App = props => {
                     <Tabs
                         type="card"
                         defaultActiveKey="market" items={items}
-                        centered={"true"}
                         tabBarExtraContent={{
                             right:
                                 <>
-                                    {!isConnected && <Button type={"primary"} onClick={connectWallet}>
-                                        Connect Wallet
-                                    </Button>}
+                                    <Button onClick={connectWallet} type={"primary"}>
+                                        {isConnected ?
+                                            <>
+                                                Hello
+                                                {" " + signerAddress}
+                                            </>
+                                            : <>
+                                                Connect
+                                            </>}
+
+                                    </Button>
                                 </>
                         }
                         }
