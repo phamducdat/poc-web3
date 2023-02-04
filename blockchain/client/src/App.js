@@ -123,26 +123,6 @@ const App = props => {
                 reloadStakeAssets
             }}>
                 {provider && contract && <Content style={{textAlign: 'center', margin: "16px"}}>
-                    {/*<Space direction={"vertical"}>*/}
-                    {/*    <Card*/}
-                    {/*        title={"Ethereum Market"}*/}
-                    {/*        style={{width: "1500px"}}*/}
-                    {/*        key={"ethereumMarket"}*/}
-                    {/*    >*/}
-                    {/*        <EthereumMarket/>*/}
-                    {/*    </Card>*/}
-                    {/*    <Card*/}
-                    {/*        style={{width: "1500px"}}*/}
-                    {/*        title={"Staked Assets"}*/}
-                    {/*        key={reloadStakeAssets}*/}
-                    {/*        extra={<>*/}
-                    {/*            {!isConnected && <Button type={"primary"} onClick={connectWallet}>*/}
-                    {/*                Connect Wallet*/}
-                    {/*            </Button>}*/}
-                    {/*        </>}>*/}
-                    {/*        {isConnected && <StakedAssets/>}*/}
-                    {/*    </Card>*/}
-                    {/*</Space>*/}
                     <Tabs
                         type="card"
                         defaultActiveKey="market" items={items}

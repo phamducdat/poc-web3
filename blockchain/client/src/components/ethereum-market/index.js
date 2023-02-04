@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {Button, Table} from "antd";
+import {Button, Card, Col, Row, Table} from "antd";
 import './index.css'
 
 import StakeModal from "./stake-modal";
 import {displayLogo, LinkToAddressToken} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
+import StakeCard from "./stake-card";
 
 
 const EthereumMarket = props => {
@@ -80,12 +81,29 @@ const EthereumMarket = props => {
 
     return (
         <>
-            {tokenAddresses?.length > 0 &&
-                <Table
-                    columns={columns}
-                    dataSource={mapDataSource()}
-                />}
 
+            <Row gutter={16}>
+                <Col span={16}>
+                    <Card>
+                        {tokenAddresses?.length > 0 &&
+                            <Table
+                                columns={columns}
+                                dataSource={mapDataSource()}
+                            />
+
+                        }
+                    </Card>
+                </Col>
+
+                <Col span={8}>
+
+
+                    <Card>
+                        <StakeCard/>
+                    </Card>
+                </Col>
+
+            </Row>
             <StakeModal
                 open={stakeModalOpen}
                 onOk={() => setStakeModalOpen(false)}
