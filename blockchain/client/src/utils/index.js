@@ -22,7 +22,7 @@ export const displayLogo = symbol => {
 export const toEther = wei => {
     try {
 
-        return Number(ethers.utils.formatEther(String(wei))).toFixed(2)
+        return Number(ethers.utils.formatEther(wei)).toFixed(2)
     } catch (error) {
         return error.message;
     }

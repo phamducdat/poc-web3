@@ -3,7 +3,7 @@ import {Button, Card, Col, Row, Table} from "antd";
 import './index.css'
 
 import StakeModal from "./stake-modal";
-import {displayLogo, LinkToAddressToken} from "../../utils";
+import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 import StakeCard from "./stake-card";
 
@@ -46,6 +46,14 @@ const EthereumMarket = props => {
             title: 'Symbol',
             dataIndex: 'symbol',
             key: 'symbol',
+        },
+        {
+            title: 'Ether Price',
+            dataIndex: 'ethPrice',
+            key: 'ethPrice',
+            render: (text) => {
+                return Number(text?._hex).toString()
+            }
         }
     ];
 
@@ -55,6 +63,8 @@ const EthereumMarket = props => {
             return tokenAddresses.map(address => {
 
                 const token = tokens[address]
+                console.log("dat with token = ", token)
+                
                 return {
                     address: address,
                     ...token
