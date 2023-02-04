@@ -10,10 +10,14 @@ import StakeCard from "./stake-card";
 
 const EthereumMarket = props => {
 
-    const {signer, tokens, tokenAddresses} = UseWeb3AssetContext()
+    const {
+        signer, tokens, tokenAddresses,
+        isConnected
+    } = UseWeb3AssetContext()
 
     const [stakeModalOpen, setStakeModalOpen] = useState(false)
     const [tokenChosen, setTokenChosen] = useState(undefined)
+    const [tokenClickedData, setTokenClickedData] = useState()
 
 
     const columns = [
@@ -89,6 +93,14 @@ const EthereumMarket = props => {
                             <Table
                                 columns={columns}
                                 dataSource={mapDataSource()}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onClick: (event) => {
+                                            setTokenClickedData(record)
+
+                                        },
+                                    };
+                                }}
                             />
 
                         }
@@ -98,8 +110,16 @@ const EthereumMarket = props => {
                 <Col span={8}>
 
 
-                    <Card>
-                        <StakeCard/>
+                    <Card title={<>
+                        <Row align={"middle"}
+                             justify={"center"}
+                        >
+                            {displayLogo(tokenClickedData?.symbol)}
+                            {tokenClickedData?.symbol}
+                        </Row>
+                    </>}>
+                  
+                            <StakeCard data={tokenClickedData}/>
                     </Card>
                 </Col>
 

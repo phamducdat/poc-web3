@@ -19,7 +19,6 @@ contract Staking {
         string name;
         string symbol;
         uint ethPrice;
-        uint maxStorage;
     }
 
     address[] public tokenAddresses;
@@ -124,8 +123,7 @@ contract Staking {
         address tokenAddress,
         string calldata name,
         string calldata symbol,
-        uint ethPrice,
-        uint currentStorage
+        uint ethPrice
 
     ) external onlyOwner {
         tokenAddresses.push(tokenAddress);
@@ -135,7 +133,6 @@ contract Staking {
             name,
             symbol,
             ethPrice,
-            currentStorage
         );
         currentTokenId += 1;
     }

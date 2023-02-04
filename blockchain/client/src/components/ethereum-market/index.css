@@ -4,3 +4,10 @@
     width: 28px;
     height: 28px;
 }
+
+.table-row-light {
+    background-color: rgba(59,130,246,.5);
+}
+.table-row-dark {
+    background-color: #fbfbfb;
+}

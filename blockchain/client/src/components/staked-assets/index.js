@@ -59,6 +59,8 @@ const StakedAssets = props => {
         })
     }
 
+    
+
 
     useMemo(() => {
         const onLoad = async () => {
