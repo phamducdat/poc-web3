@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Detail = props => {
+const Details = props => {
 
     return (
         <div>
@@ -10,8 +10,8 @@ const Detail = props => {
     );
 };
 
-Detail.propTypes = {
+Details.propTypes = {
 
 };
 
-export default Detail;
+export default Details;

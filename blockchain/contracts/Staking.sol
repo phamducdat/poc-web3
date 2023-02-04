@@ -198,10 +198,10 @@ contract Staking {
         Deposit memory deposit = deposits[depositId];
 
         if (deposits[depositId].isUnlimited == true) {
-            uint calDate = (block.timestamp - deposit.createdDate)/ (1 days);
+            uint calDate = (block.timestamp - deposit.createdDate)/ (84600);
             return deposit.ethValue * calDate * deposit.interestRate / (1000 * 365);
         } else {
-            uint calDate = (block.timestamp - deposit.createdDate) / (1 days);
+            uint calDate = (block.timestamp - deposit.createdDate) / (84600);
             if (calDate > deposit.numberDays) {
                 calDate = deposit.numberDays;
             }

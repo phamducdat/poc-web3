@@ -48,8 +48,6 @@ const App = props => {
         setCurrentTabKey(searchParams?.get("tabKey").toString())
     }, [window.location.search])
 
-    console.log("dat with current tabkey = ", currentTabKey)
-
 
     useEffect(() => {
 
