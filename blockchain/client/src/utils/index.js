@@ -1,6 +1,6 @@
 import {ethers} from "ethers";
 import {Link} from "react-router-dom";
-import {Button, Col, message, Row} from "antd";
+import {Button, Col, message, Row, Tag} from "antd";
 import {CopyOutlined} from "@ant-design/icons";
 
 export const displayLogo = symbol => {
@@ -16,6 +16,31 @@ export const displayLogo = symbol => {
         return (<><img className="logoImg" src="wbtc.png" alt={"wbtc"}/></>)
     } else if (symbol === 'WETH') {
         return (<><img className="logoImg" src="eth.png" alt={"eth"}/></>)
+    }
+}
+
+export const displayPeriod = (period) => {
+    const numberDays = Number(period)
+    switch (numberDays) {
+        case 0:
+            return <Tag>
+                Unlimited
+            </Tag>
+        case 30:
+            return <Tag>
+                1 month
+            </Tag>
+        case 180:
+            return <Tag>
+                6 months
+            </Tag>
+        case 365:
+            return <Tag>
+                1 year
+            </Tag>
+        default:
+            return  null;
+
     }
 }
 

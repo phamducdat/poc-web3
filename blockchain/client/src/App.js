@@ -11,6 +11,7 @@ import wbtcArtifact from './artifacts/contracts/WrappedBitcoin.sol/WrappedBitcoi
 import wethArtifact from './artifacts/contracts/WrappedEther.sol/WrappedEther.json'
 import StakedAssets from "./components/staked-assets";
 import {BarChartOutlined, PoundOutlined} from "@ant-design/icons";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 
 const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS
@@ -35,10 +36,19 @@ const App = props => {
     const [isConnected, setIsConnected] = useState(false);
     const [tokenAddresses, setTokenAddresses] = useState([]);
     const [tokenContracts, setTokenContracts] = useState({})
-    const [tokens, setTokens] = useState({});
+    const [tokens, setTokens] = useState({})
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [currentTabKey, setCurrentTabKey] = useState(searchParams?.get("tabKey").toString())
+    const navigate = useNavigate()
 
     const [reloadStakeAssets, setReloadStakeAssets] = useState(false)
 
+
+    useEffect(() => {
+        setCurrentTabKey(searchParams?.get("tabKey").toString())
+    }, [window.location.search])
+
+    console.log("dat with current tabkey = ", currentTabKey)
 
 
     useEffect(() => {
@@ -110,11 +120,10 @@ const App = props => {
         {
             key: 'stakeAssets',
             label: <>
-                <PoundOutlined />
+                <PoundOutlined/>
                 Stake Assets
-                </>,
-            children: isConnected && <StakedAssets/>,
-            disabled: !isConnected
+            </>,
+            children: isConnected ? <StakedAssets/> : "Please connect to your wallet",
         }
     ]
 
@@ -135,15 +144,23 @@ const App = props => {
                 {provider && contract && <Content style={{textAlign: 'center', margin: "16px"}}>
                     <Tabs
                         type="card"
-                        defaultActiveKey="market" items={items}
+                        onChange={(activeKey) => {
+                            searchParams.delete("tabKey")
+                            searchParams.set("tabKey", activeKey)
+                            navigate({
+                                pathname: window.location.pathname,
+                                search: `?${searchParams.toString()}`
+                            })
+                        }}
+                        activeKey={currentTabKey ? currentTabKey : "market"}
+                        items={items}
                         tabBarExtraContent={{
                             right:
                                 <>
                                     <Button onClick={connectWallet} type={"primary"}>
                                         {isConnected ?
                                             <>
-                                                Hello
-                                                {" " + signerAddress}
+                                                {signerAddress}
                                             </>
                                             : <>
                                                 Connect

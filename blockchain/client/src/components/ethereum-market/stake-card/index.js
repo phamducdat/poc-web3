@@ -69,7 +69,7 @@ const StakeCard = props => {
         if (periodIdClicked) {
             const period = periods[periodIdClicked]
             const anticipatedInterest =
-                (quantity * Number(data?.ethPrice) * period?.interestRate) / 100
+                (quantity * Number(data?.ethPrice) * period?.interestRate) / 1000
 
             setDetails({
                 quantity: quantity,
@@ -105,10 +105,10 @@ const StakeCard = props => {
             if (Number(period?.numberDays) === 30)
                 str = "1 month";
             if (Number(period?.numberDays) === 180)
-                str = "6 month";
+                str = "6 months";
             if (Number(period?.numberDays) === 365)
                 str = "1 year";
-            return str + " - " + Number(period?.interestRate) / 100 + "%"
+            return str + " - " + Number(period?.interestRate) / 10 + "%"
         }
     }
 

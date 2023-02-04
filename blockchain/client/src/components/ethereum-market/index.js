@@ -63,8 +63,6 @@ const EthereumMarket = props => {
             return tokenAddresses.map(address => {
 
                 const token = tokens[address]
-                console.log("dat with token = ", token)
-                
                 return {
                     address: address,
                     ...token
@@ -115,13 +113,6 @@ const EthereumMarket = props => {
                 </Col>
 
             </Row>
-            <StakeModal
-                open={stakeModalOpen}
-                onOk={() => setStakeModalOpen(false)}
-                onCancel={() => setStakeModalOpen(false)}
-                data={tokenChosen}
-            />
-
         </>
     );
 };

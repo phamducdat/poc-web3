@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {Button, Table} from "antd";
-import {displayLogo, LinkToAddressToken, toEther} from "../../utils";
+import {displayLogo, displayPeriod, LinkToAddressToken, toEther} from "../../utils";
 import {UseWeb3AssetContext} from "../../App";
 import './index.css'
 import moment from 'moment'
@@ -53,13 +53,11 @@ const StakedAssets = props => {
                 ...deposit,
                 asset: token.asset,
                 symbol: token.symbol,
-                ethAccruedInterest:Number(ethers.utils.formatEther(String(calculateDepositInterest))).toFixed(4)
+                ethAccruedInterest: Number(ethers.utils.formatEther(String(calculateDepositInterest))).toFixed(4)
             }
             setDataSource(prev => [...prev, data])
         })
     }
-
-    
 
 
     useMemo(() => {
@@ -98,9 +96,22 @@ const StakedAssets = props => {
             }
         },
         {
-            title: "Accrued Interest (ETH)",
+            title: "Accrued Interest",
             dataIndex: "ethAccruedInterest",
             key: "ethAccruedInterest"
+        },
+        {
+            title: "Interest",
+            dataIndex: "interest",
+            key: "interest"
+        },
+        {
+            title: "Period",
+            dataIndex: "numberDays",
+            key: "numberDays",
+            render: (text) => {
+                return displayPeriod(text)
+            }
         },
         {
             title: "Created Date",
@@ -109,6 +120,24 @@ const StakedAssets = props => {
             render: (text) => {
                 const timeInSeconds = parseInt(text._hex, 16)
                 return moment(timeInSeconds * 1000).format("DD/MM/YYYY HH:mm:ss")
+            }
+        }, {
+            title: "Excepted Closing Date",
+            dataIndex: "createdDate",
+            key: "expectedClosingDate",
+            render: (text, record) => {
+                const timeInSeconds = parseInt(text._hex, 16)
+                return moment(timeInSeconds * 1000).add(Number(record?.numberDays), 'days').format("DD/MM/YYYY HH:mm:ss")
+            }
+        },
+        {
+            title: "Closing Day",
+            dataIndex: "closingDate",
+            key: "closingDate",
+            render: (text) => {
+                const timeInSeconds = parseInt(text._hex, 16)
+                if (timeInSeconds !== 0)
+                    return moment(timeInSeconds * 1000).format("DD/MM/YYYY HH:mm:ss")
             }
         },
         {
@@ -132,19 +161,19 @@ const StakedAssets = props => {
     ]
 
 
+
     const showTotal = (total) => `Total ${total} items`;
     return (
-        <div>
-            <Table
-                columns={columns}
-                dataSource={dataSource}
-                pagination={{
-                    total: totalCount,
-                    showTotal: showTotal
-                }}
-            />
-        </div>
-    );
+        <Table
+            columns={columns}
+            dataSource={dataSource}
+            pagination={{
+                total: totalCount,
+                showTotal: showTotal
+            }}
+        />
+    )
+        ;
 };
 
 StakedAssets.propTypes = {};
